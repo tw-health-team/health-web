@@ -2,7 +2,7 @@ import Mock from 'mockjs'
 import * as login from './modules/login'
 import * as user from './modules/user'
 import * as role from './modules/role'
-import * as dept from './modules/dept'
+import * as organ from './modules/organ'
 import * as menu from './modules/menu'
 import * as dict from './modules/dict'
 import * as log from './modules/log'
@@ -15,7 +15,7 @@ let openMock = false
 fnCreate(login, openMock)
 fnCreate(user, openMock)
 fnCreate(role, openMock)
-fnCreate(dept, openMock)
+fnCreate(organ, openMock)
 fnCreate(menu, openMock)
 fnCreate(dict, openMock)
 fnCreate(log, openMock)

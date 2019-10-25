@@ -30,7 +30,7 @@
         </el-button-group>
       </el-form-item>
     </el-form>
-    <!--表格显示列界面 111-->
+    <!--表格显示列界面-->
     <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
       @handleFilterColumns="handleFilterColumns">
     </table-column-filter-dialog>
@@ -303,7 +303,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .hide{
   width: 0;
   position: absolute

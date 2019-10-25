@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios'
 import config from './config'
 import Cookies from 'js-cookie'
@@ -122,7 +123,7 @@ instance.interceptors.response.use(
           err.message = `请求地址出错: ${err.response.config.url}`
           break
         case 408:
-          err.message = '请求超时'
+          err.message = '请求超时，请检查服务！'
           break
         case 500:
           err.message = '服务器内部错误'
@@ -145,7 +146,16 @@ instance.interceptors.response.use(
         default:
       }
     }
-    console.error(err)
+    console.error(err.message)
+    // 1. 判断请求超时
+    if (err.code === 'ECONNABORTED' && err.message.indexOf('timeout') !== -1) {
+      err.message = '请求超时，请检查服务！'
+    }
+    Vue.prototype.$message({
+      message: err.message,
+      type: 'error',
+      showClose: true
+    })
     return Promise.reject(err) // 返回接口返回的错误信息
   }
 )

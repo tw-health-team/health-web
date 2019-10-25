@@ -50,8 +50,6 @@ export default {
         } else {
           this.$message({message: '操作失败, ' + res.msg, type: 'error'})
         }
-      }).catch((res) => {
-        alert(res)
       })
     },
     reset () {
