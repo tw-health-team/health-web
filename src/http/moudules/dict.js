@@ -16,7 +16,7 @@ export const update = (data) => {
 export const batchDelete = (data) => {
   return post('/system/dict/remove', data)
 }
-// 分页查询
-export const findPage = (data) => {
-  return post('/system/dict/list', data)
+// 查询字典树
+export const findDictTree = (data) => {
+  return post('system/dict/list', data)
 }

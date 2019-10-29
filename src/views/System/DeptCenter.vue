@@ -5,13 +5,16 @@
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size">
         <el-form-item>
-          <el-input v-model="filters.label" placeholder="名称"></el-input>
+          <el-input v-model="filters.deptCode" placeholder="科室代码"></el-input>
         </el-form-item>
         <el-form-item>
-          <hm-button icon="fa fa-search" label="查询" perms="system:dict:list" type="primary" @click="findTreeData(null)"/>
+          <el-input v-model="filters.deptName" placeholder="科室名称"></el-input>
         </el-form-item>
         <el-form-item>
-          <hm-button icon="fa fa-plus" label="新增" perms="system:dict:add" type="primary" @click="handleAdd" />
+          <hm-button icon="fa fa-search" label="查询" perms="system:deptCenter:list" type="primary" @click="findTreeData(null)"/>
+        </el-form-item>
+        <el-form-item>
+          <hm-button icon="fa fa-plus" label="新增" perms="system:deptCenter:add" type="primary" @click="handleAdd" />
         </el-form-item>
       </el-form>
     </div>
@@ -19,19 +22,16 @@
     <el-table :data="tableTreeDdata" stripe size="mini" style="width: 100%;"
       rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column
-        prop="label" header-align="center" treeKey="id" width="150" label="名称">
+        prop="id" header-align="center" treeKey="id" width="150" label="科室代码">
       </el-table-column>
       <el-table-column
-        prop="value" header-align="center" align="center" width="120" label="值">
+        prop="name" header-align="center" align="center" width="120" label="科室名称">
       </el-table-column>
       <el-table-column
-        prop="type" header-align="center" align="center" label="类型">
+        prop="category" header-align="center" align="center" label="科室类别">
       </el-table-column>
       <el-table-column
-        prop="sort" header-align="center" align="center" label="排序">
-      </el-table-column>
-      <el-table-column
-        prop="description" header-align="center" align="center" label="描述">
+        prop="runk" header-align="center" align="center" label="科室级别">
       </el-table-column>
       <el-table-column
         prop="remarks" header-align="center" align="center" label="备注">
@@ -45,39 +45,31 @@
       <el-table-column
         fixed="right" header-align="center" align="center" width="185" label="操作">
         <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:dict:update" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:dict:remove" type="danger" @click="handleDelete(scope.row)"/>
+          <hm-button icon="fa fa-edit" label="编辑" perms="system:deptCenter:update" @click="handleEdit(scope.row)"/>
+          <hm-button icon="fa fa-trash" label="删除" perms="system:deptCenter:remove" type="danger" @click="handleDelete(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
-    <!--表格内容栏-->
-    <!--<hm-table :height="350" permsEdit="system:dict:update" permsDelete="system:dict:remove"
-      :data="pageResult" :columns="columns"
-      @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-    </hm-table>-->
     <!--新增编辑界面-->
     <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="editDialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size">
-        <el-form-item label="ID" prop="id"  v-if="false">
-          <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
+        <el-form-item label="科室编码" prop="id" >
+          <el-input v-model="dataForm.id" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="名称" prop="label">
-          <el-input v-model="dataForm.label" auto-complete="off"></el-input>
+        <el-form-item label="科室名称" prop="name">
+          <el-input v-model="dataForm.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="值" prop="value">
-          <el-input v-model="dataForm.value" auto-complete="off"></el-input>
+        <el-form-item label="科室类别" prop="category">
+          <el-input v-model="dataForm.category" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-input v-model="dataForm.type" auto-complete="off"></el-input>
+        <el-form-item label="科室级别" prop="runk">
+          <el-input v-model="dataForm.runk" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="排序" prop="sort">
-          <el-input v-model="dataForm.sort" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="描述 " prop="description">
-          <el-input v-model="dataForm.description" auto-complete="off" type="textarea"></el-input>
+        <el-form-item label="上级科室 " prop="parent_id">
+          <el-input v-model="dataForm.parent_id" auto-complete="off" ></el-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="dataForm.remarks" auto-complete="off" type="textarea"></el-input>
+          <el-input v-model="dataForm.remarks" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -101,22 +93,9 @@ export default {
     return {
       size: 'small',
       filters: {
-        label: ''
+        deptCode: '',
+        deptName: ''
       },
-      columns: [
-        // {prop: 'id', label: 'ID', minWidth: 50},
-        {prop: 'label', label: '名称', minWidth: 100},
-        {prop: 'value', label: '值', minWidth: 100},
-        {prop: 'type', label: '类型', minWidth: 80},
-        {prop: 'sort', label: '排序', minWidth: 80},
-        {prop: 'description', label: '描述', minWidth: 120},
-        {prop: 'remarks', label: '备注', minWidth: 120},
-        {prop: 'createBy', label: '创建人', minWidth: 100},
-        {prop: 'createTime', label: '创建时间', minWidth: 120, formatter: this.dateFormat}
-        // {prop:'lastUpdateBy', label:'更新人', minWidth:100},
-        // {prop:"lastUpdateTime", label:"更新时间", minWidth:120, formatter:this.dateFormat}
-      ],
-      pageRequest: { pageNum: 1, pageSize: 10 },
       tableTreeDdata: [],
       pageResult: {},
       operation: false, // true:新增, false:编辑
@@ -144,15 +123,15 @@ export default {
     // 获取数据
     findTreeData: function () {
       this.loading = true
-      let params = {name: this.filters.label}
-      this.$api.dict.findDictTree(params).then((res) => {
+      let params = {id: this.filters.deptCode, name: this.filters.deptName}
+      this.$api.deptCenter.findDeptCenterTree(params).then((res) => {
         this.tableTreeDdata = res.data
         this.loading = false
       })
     },
     // 批量删除
     handleDelete: function (data) {
-      this.$api.dict.batchDelete(data.params).then(data != null ? data.callback : '')
+      this.$api.deptCenter.batchDelete(data.params).then(data != null ? data.callback : '')
     },
     // 显示新增界面
     handleAdd: function () {
@@ -184,7 +163,7 @@ export default {
             this.editLoading = true
             let params = Object.assign({}, this.dataForm)
             if (this.type === 1) {
-              this.$api.dict.add(params).then((res) => {
+              this.$api.deptCenter.add(params).then((res) => {
                 if (res.status === 1) {
                   this.$message({ message: '操作成功', type: 'success' })
                 } else {
@@ -196,7 +175,7 @@ export default {
                 this.findPage(null)
               })
             } else {
-              this.$api.dict.update(params).then(res => {
+              this.$api.deptCenter.update(params).then(res => {
                 if (res.status === 1) {
                   this.$message({ message: '操作成功', type: 'success' })
                 } else {
@@ -218,6 +197,7 @@ export default {
     }
   },
   mounted () {
+    this.findTreeData()
   }
 }
 </script>

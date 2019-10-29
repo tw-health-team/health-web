@@ -8,12 +8,14 @@ import * as role from './moudules/role'
 import * as menu from './moudules/menu'
 import * as dict from './moudules/dict'
 import * as log from './moudules/log'
+import * as deptCenter from './moudules/deptCenter'
 
 // 默认全部导出
 export default {
   login,
   user,
   dept,
+  deptCenter,
   role,
   menu,
   dict,
