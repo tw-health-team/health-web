@@ -14,7 +14,6 @@ import * as deptCenter from './moudules/deptCenter'
 export default {
   login,
   user,
-  dept,
   deptCenter,
   organ,
   role,
