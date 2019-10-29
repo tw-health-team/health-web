@@ -3,19 +3,40 @@
   <!--工具栏-->
   <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
     <el-form :inline="true" :model="filters" :size="size">
-      <el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item>
+            <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item>
+            <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
+          </el-form-item>
+          <el-form-item>
+            <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
+          </el-form-item>
+          <el-form-item>
+            <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <!-- <el-form-item>
         <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
       </el-form-item>
       <el-form-item>
         <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
       </el-form-item>
       <el-form-item>
-        <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd"/>
+        <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
       </el-form-item>
+      <el-form-item>
+        <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
+      </el-form-item> -->
     </el-form>
   </div>
     <!--表格树内容栏-->
-    <el-table :data="tableTreeDdata" stripe size="mini" style="width: 100%;"
+    <el-table ref="organTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
       rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column
         prop="name" header-align="center" treeKey="id" width="150" label="名称">
@@ -33,10 +54,11 @@
         prop="classificationName" header-align="center" align="center" label="机构类别">
       </el-table-column>
       <el-table-column
-        fixed="right" header-align="center" align="center" width="185" label="操作">
+        fixed="right" header-align="center" align="left" width="120" label="操作">
         <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:organ:update" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:organ:remove" type="danger" @click="handleDelete(scope.row)"/>
+          <hm-button icon="fa fa-edit" label="编辑" perms="system:organ:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+          <hm-button icon="fa fa-plus" label="添加下级" perms="system:organ:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
+          <hm-button icon="fa fa-trash" label="删除" perms="system:organ:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
@@ -125,12 +147,13 @@ export default {
   },
   data () {
     return {
+      isFold: 'true', // 是否折叠所有节点
       size: 'small',
       loading: false,
       filters: {
         name: ''
       },
-      tableTreeDdata: [],
+      tableTreeData: [],
       dialogVisible: false,
       dataForm: {
         id: '',
@@ -186,6 +209,30 @@ export default {
     }
   },
   methods: {
+    /**
+     * 展开或搜索table行
+     * @$table table组件
+     * @data table数据
+     * @flag true 展开 false收缩
+     */
+    expandOrFoldTableRow ($table, data, flag) {
+      if (data.children && data.children.length > 0) {
+        $table.toggleRowExpansion(data, flag)
+        data.children.map(item => {
+          this.expandOrFoldTableRow($table, item, flag)
+        })
+      }
+    },
+    // 展开/折叠所有节点
+    expandOrFoldAllNode (value) {
+      console.log(value)
+      // 遍历table数据
+      this.tableTreeData.map(item => {
+        // 展开或收缩table行
+        this.expandOrFoldTableRow(this.$refs.organTable, item, value)
+        // this.$refs.organTable.toggleRowExpansion(item)
+      })
+    },
     fetchDics () {
       /**
        * 请求字典数据
@@ -202,30 +249,30 @@ export default {
       this.loading = true
       let params = {name: this.filters.name}
       this.$api.organ.list(params).then((res) => {
-        this.tableTreeDdata = res.data
+        this.tableTreeData = res.data
         this.popupTreeData = this.getParentMenuTree(res.data)
         this.loading = false
       })
     },
     // 获取上级机构树
-    getParentMenuTree: function (tableTreeDdata) {
+    getParentMenuTree: function (tableTreeData) {
       let parent = {
         parentId: 0,
         name: '顶级菜单',
-        children: tableTreeDdata
+        children: tableTreeData
       }
       return [parent]
     },
     // 显示新增界面
-    handleAdd: function () {
+    handleAdd: function (parent = null) {
       this.type = 1
       this.dialogVisible = true
       this.dataForm = {
         id: '',
         name: '',
         shortName: '',
-        parentId: 0,
-        parentName: '',
+        parentId: parent == null ? 0 : parent.id,
+        parentName: parent == null ? '' : parent.name,
         orderNum: 0,
         classificationCode: '',
         levelCode: '',
@@ -327,4 +374,8 @@ export default {
 
 <style scoped lang="scss">
   @import "@/assets/css/detail.scss";
+  .el-button+.el-button--mini {
+    margin-left: 0px;
+    margin-top: 2px;
+  }
 </style>
