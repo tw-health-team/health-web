@@ -40,7 +40,7 @@
     :data="pageResult" :columns="filterColumns"
     @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
   </hm-table>
-  <!--新增编辑界面-->
+  <!-- ------------------------------新增修改界面 begin-------------------------------- -->
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
       label-position="right">
@@ -84,6 +84,7 @@
       <el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">提交</el-button>
     </div>
   </el-dialog>
+  <!-- ------------------------------新增修改界面 end-------------------------------- -->
   </div>
 </template>
 
@@ -240,9 +241,9 @@ export default {
         }
       })
     },
-    // 获取部门列表
-    findDeptTree: function () {
-      this.$api.dept.findDeptTree().then((res) => {
+    // 获取机构列表
+    findOrganTree: function () {
+      this.$api.organ.findOrganTree().then((res) => {
         this.deptData = res.data
       })
     },
@@ -297,13 +298,13 @@ export default {
     }
   },
   mounted () {
-    this.findDeptTree()
+    this.findOrganTree()
     this.initColumns()
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .hide{
   width: 0;
   position: absolute

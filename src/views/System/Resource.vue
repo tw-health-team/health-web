@@ -12,10 +12,13 @@
         <el-form-item>
           <hm-button icon="fa fa-plus" label="新增" perms="system:resource:add" type="primary" @click="handleAdd"/>
         </el-form-item>
+        <el-form-item>
+          <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
+        </el-form-item>
       </el-form>
     </div>
     <!--表格树内容栏-->
-    <el-table :data="tableTreeDdata" stripe size="mini" style="width: 100%;"
+    <el-table ref="resourceTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
       rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column
         prop="name" header-align="center" treeKey="id" width="150" label="名称">
@@ -140,12 +143,13 @@ export default {
   },
   data () {
     return {
+      isFold: 'true', // 是否折叠所有节点
       size: 'small',
       loading: false,
       filters: {
         name: ''
       },
-      tableTreeDdata: [],
+      tableTreeData: [],
       dialogVisible: false,
       menuTypeList: ['目录', '菜单', '按钮'],
       dataForm: {
@@ -173,21 +177,44 @@ export default {
     }
   },
   methods: {
+    /**
+     * 展开或搜索table行
+     * @$table table组件
+     * @data table数据
+     * @flag true 展开 false收缩
+     */
+    expandOrFoldTableRow ($table, data, flag) {
+      if (data.children && data.children.length > 0) {
+        $table.toggleRowExpansion(data, flag)
+        data.children.map(item => {
+          this.expandOrFoldTableRow($table, item, flag)
+        })
+      }
+    },
+    // 展开/折叠所有节点
+    expandOrFoldAllNode (value) {
+      console.log(value)
+      // 遍历table数据
+      this.tableTreeData.map(item => {
+        // 展开或收缩table行
+        this.expandOrFoldTableRow(this.$refs.resourceTable, item, value)
+      })
+    },
     // 获取数据
     findTreeData: function () {
       this.loading = true
       this.$api.menu.findMenuTree().then(res => {
-        this.tableTreeDdata = res.data
+        this.tableTreeData = res.data
         this.popupTreeData = this.getParentMenuTree(res.data)
         this.loading = false
       })
     },
     // 获取上级菜单树
-    getParentMenuTree: function (tableTreeDdata) {
+    getParentMenuTree: function (tableTreeData) {
       let parent = {
         parentId: 0,
         name: '顶级菜单',
-        children: tableTreeDdata
+        children: tableTreeData
       }
       return [parent]
     },

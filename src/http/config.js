@@ -10,7 +10,7 @@ export default {
   },
   // 参数
   data: {},
-  // 设置超时时间
+  // 设置超时时间(30s)
   timeout: 30000,
   // 携带凭证
   withCredentials: true,

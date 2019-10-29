@@ -16,6 +16,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'font-awesome/css/font-awesome.min.css'
 // 引入iconfont-阿里图标
 import '@/assets/iconfont/iconfont.css'
+// 自定义样式
+import '@/assets/css/index.scss'
 
 Vue.use(ElementUI)
 Vue.use(api)
