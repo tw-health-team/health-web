@@ -1,0 +1,8 @@
+$split-line-color: #D8DCE3;
+.el-dialog__body {
+  padding: 20px 20px 0px;
+  max-height: calc(100vh - 120px * 2);
+  overflow: auto;
+  border-top: 1px solid $split-line-color;
+  border-bottom: 1px solid $split-line-color;
+}

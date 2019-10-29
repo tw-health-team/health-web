@@ -1,0 +1,73 @@
+/********* 表单样式 ********/
+// 表单项目块
+.form-item-wrap {
+  min-height: 52px;
+  display: flex; // 弹性布局
+  flex-direction: row; // 沿水平主轴让元素从左向右排列
+  justify-content: space-between; // 元素在主轴（页面）上左右两端或者上下两端开始排列
+  .el-form-item.needImprove {
+    /deep/ .el-form-item__label {
+      color: #1890FF;
+    }
+  }
+  .el-form-item.nation {
+    left: 10px;
+    position: relative;
+    /deep/ .el-form-item__content {
+      /deep/ .el-input {
+          width: 102px;
+      }
+      /deep/ .el-input__inner {
+        height: 32px !important;
+      }
+    }
+  }
+  .el-form-item {
+    /deep/ .el-form-item__error {
+      padding-top: 0;
+    }
+    /deep/ .el-form-item__label {
+      font-size: 14px;
+      color: rgba(0,0,0,0.65);
+    }
+    /deep/ .el-form-item__content {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      justify-content: flex-start;
+      /deep/ .el-input {
+        width: 190px;
+      }
+      /deep/ .el-date-editor.el-input {
+        width: 190px;
+        /deep/ .el-input__prefix {
+          left: 146px;
+        }
+      }
+    }
+  }
+}
+
+.form-item-wrap.multiple {
+  justify-content: space-between;
+  .el-form-item {
+    width: 48%;
+    /deep/ .el-select {
+      width: 100%;
+      /deep/ .el-tag__close.el-icon-close {
+        top: -1px;
+        right: -4px;
+      }
+    }
+    /deep/ .el-form-item__content {
+      /deep/ .el-input {
+        width: 100%;
+      }
+    }
+    /deep/ .el-date-editor.el-input {
+      /deep/ .el-input__prefix {
+        left: 300px;
+      }
+    }
+  }
+}

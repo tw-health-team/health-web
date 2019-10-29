@@ -20,3 +20,7 @@ export const batchDelete = (data) => {
 export const findDictTree = (data) => {
   return post('system/dict/list', data)
 }
+// 通过字典分类获取字典项
+export const findDictByType = (params) => {
+  return get('/system/dict/findByType/{type}', null, params)
+}
