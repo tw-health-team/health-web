@@ -1,40 +1,22 @@
 <template>
   <div class="page-container">
-  <!--工具栏-->
-  <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-    <el-form :inline="true" :model="filters" :size="size">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item>
-            <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item>
-            <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
-          </el-form-item>
-          <el-form-item>
-            <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
-          </el-form-item>
-          <el-form-item>
-            <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <!-- <el-form-item>
-        <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
-      </el-form-item>
-      <el-form-item>
-        <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
-      </el-form-item>
-      <el-form-item>
-        <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-      </el-form-item> -->
-    </el-form>
-  </div>
+    <!--工具栏-->
+    <div class="toolbar" style="padding-top:10px;padding-left:15px;">
+      <el-form :model="filters" :size="size">
+        <el-form-item>
+          <el-row :gutter="24" type="flex" justify="start" align="top">
+            <el-col :span="6">
+              <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
+            </el-col>
+            <el-col :span="6" class="nopadding">
+              <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
+              <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
+              <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+    </div>
     <!--表格树内容栏-->
     <el-table ref="organTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
       rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
@@ -115,7 +97,7 @@
         <el-form-item label="联系电话" prop="phone">
           <el-input v-model="dataForm.phone" placeholder="联系电话" maxlength="20" show-word-limit></el-input>
         </el-form-item>
-        <el-form-item label="机构地址" prop="phone">
+        <el-form-item label="机构地址" prop="address">
           <el-input v-model="dataForm.address" placeholder="机构地址" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="排序编号" prop="orderNum">

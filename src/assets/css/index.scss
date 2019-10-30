@@ -12,3 +12,8 @@ $split-line-color: #D8DCE3;
 .el-button--mini, .el-button--mini.is-round {
   padding: 5px 7px;
 }
+
+// 无内边距
+.nopadding {
+  padding: 0px !important;
+}

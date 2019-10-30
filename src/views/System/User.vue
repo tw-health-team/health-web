@@ -44,8 +44,8 @@
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
       label-position="right">
-      <input type="password" class="hide" id="loginPassword"/>
-      <input type="text" class="hide" id="loginUserName"/>
+      <input type="password" v-if="false" id="loginPassword"/>
+      <input type="text" v-if="false" id="loginUserName"/>
       <el-form-item label="ID" prop="id" v-if="false">
         <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
       </el-form-item>
@@ -305,8 +305,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.hide{
-  width: 0;
-  position: absolute
-}
+
 </style>
