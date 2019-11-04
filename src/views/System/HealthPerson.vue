@@ -4,13 +4,13 @@
   <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
     <el-form :inline="true" :model="filters" :size="size">
       <el-form-item>
-        <el-input v-model="filters.name" placeholder="用户名"></el-input>
+        <el-input v-model="filters.name" placeholder="卫生人员姓名"></el-input>
       </el-form-item>
       <el-form-item>
-        <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findPage(null)"/>
+        <hm-button icon="fa fa-search" label="查询" perms="system:healthperson:list" type="primary" @click="findPage(null)"/>
       </el-form-item>
       <el-form-item>
-        <hm-button icon="fa fa-plus" label="新增" perms="system:user:add" type="primary" @click="handleAdd" />
+        <hm-button icon="fa fa-plus" label="新增" perms="system:healthperson:add" type="primary" @click="handleAdd" />
       </el-form-item>
     </el-form>
   </div>
@@ -30,13 +30,13 @@
         </el-button-group>
       </el-form-item>
     </el-form>
-    <!--表格显示列界面 111-->
+    <!--表格显示列界面-->
     <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
       @handleFilterColumns="handleFilterColumns">
     </table-column-filter-dialog>
   </div>
   <!--表格内容栏-->
-  <hm-table :height="350" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
+  <hm-table :height="350" permsEdit="system:healthperson:update" :showBatchDelete="false" permsDelete="system:healthperson:remove"
     :data="pageResult" :columns="filterColumns"
     @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
   </hm-table>
@@ -44,40 +44,59 @@
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
       label-position="right">
-      <input type="password" class="hide" id="loginPassword"/>
-      <input type="text" class="hide" id="loginUserName"/>
-      <el-form-item label="ID" prop="id" v-if="false">
-        <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="用户名" prop="name">
-        <el-input v-model="dataForm.name" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input v-model="dataForm.password" type="password" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="机构" prop="deptName">
+      <el-form-item label="所属机构" prop="organName">
         <popup-tree-input
           :data="deptData"
           :props="deptTreeProps"
-          :prop="dataForm.deptName"
-          :nodeKey="''+dataForm.deptId"
-          :currentChangeHandle="deptTreeCurrentChangeHandle">
+          :prop="dataForm.organName"
+          :nodeKey="''+dataForm.organId"
+          :currentChangeHandle="organTreeCurrentChangeHandle">
         </popup-tree-input>
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item label="人员工号" prop="jobNumber">
+        <el-input v-model="dataForm.jobNumber" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="人员姓名" prop="name">
+        <el-input v-model="dataForm.name" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="出生日期" prop="birthday">
+        <el-input v-model="dataForm.birthday" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="性别" prop="sex">
+        <el-input v-model="dataForm.sex" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="身份证号" prop="idcard">
+        <el-input v-model="dataForm.idcard" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="联系电话" prop="telephone">
+        <el-input v-model="dataForm.telephone" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="文化程度" prop="education">
+        <el-input v-model="dataForm.education" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="职  称" prop="title">
+        <el-input v-model="dataForm.title" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="职  务" prop="post">
+        <el-input v-model="dataForm.post" auto-complete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="电子邮箱" prop="email">
         <el-input v-model="dataForm.email" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="手机" prop="mobile">
-        <el-input v-model="dataForm.mobile" auto-complete="off"></el-input>
+      <el-form-item label="所属科室" prop="belongDepart">
+        <el-input v-model="dataForm.belongDepart" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="角色" prop="userRoles" v-if="!operation">
+      <el-form-item label="启用状态" prop="enabled">
+        <el-input v-model="dataForm.enabled" auto-complete="off"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="角色" prop="userRoles" v-if="!operation">
         <el-select v-model="dataForm.roles" multiple placeholder="请选择"
             style="width: 100%;">
           <el-option v-for="item in roles" :key="item.id"
             :label="item.name" :value="item.id">
           </el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button :size="size" @click.native="dialogVisible = false">取消</el-button>
@@ -114,21 +133,44 @@ export default {
       dialogVisible: false, // 新增编辑界面是否显示
       editLoading: false,
       dataFormRules: {
+        organName: [
+          { required: true, message: '请选择所属机构', trigger: 'blur' }
+        ],
+        jobNumber: [
+          { required: true, message: '请输入人员工号', trigger: 'blur' }
+        ],
         name: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ]
+          { required: true, message: '请输入人员姓名', trigger: 'blur' }
+        ]/* ,
+        birthday: [
+          { required: true, message: '请输入出生日期', trigger: 'blur' }
+        ],
+        sex: [
+          { required: true, message: '请输入性别', trigger: 'blur' }
+        ],
+        idcard: [
+          { required: true, message: '请输入身份证号', trigger: 'blur' }
+        ],
+        telephone: [
+          { required: true, message: '请输入联系电话', trigger: 'blur' }
+        ] */
       },
       // 新增编辑界面数据
       dataForm: {
-        id: 0,
+        organId: '',
+        organName: '',
+        jobNumber: '',
         name: '',
-        password: '123456',
-        deptId: 1,
-        deptName: '',
+        birthday: '',
+        sex: '',
+        idcard: '',
+        telephone: '',
+        education: '',
+        title: '',
+        post: '',
         email: '',
-        mobile: '',
-        status: 1,
-        userRoles: []
+        belongDepart: '',
+        enabled: ''
       },
       deptData: [],
       deptTreeProps: {
@@ -145,11 +187,12 @@ export default {
       if (data !== null) {
         this.pageRequest = data.pageRequest
       }
+      // debugger
       // this.pageRequest.columnFilters = {name: {name: 'name', value: this.filters.name}}
       this.pageRequest.name = this.filters.name
-      this.$api.user.findPage(this.pageRequest).then((res) => {
+      this.$api.healthPerson.findPage(this.pageRequest).then((res) => {
         this.pageResult = res.data
-        this.findAllRoles()
+        // this.findAllRoles()
       }).then(data != null ? data.callback : '')
     },
     // 加载用户角色信息
@@ -161,7 +204,7 @@ export default {
     },
     // 批量删除
     handleDelete: function (data) {
-      this.$api.user.remove({ id: data.params[0] }).then(data != null ? data.callback : '')
+      this.$api.healthPerson.remove({ id: data.params[0] }).then(data != null ? data.callback : '')
     },
     // 显示新增界面
     handleAdd: function () {
@@ -169,15 +212,20 @@ export default {
       this.dialogVisible = true
       this.operation = false
       this.dataForm = {
-        id: 0,
+        organId: '',
+        organName: '',
+        jobNumber: '',
         name: '',
-        password: '',
-        deptId: 1,
-        deptName: '',
+        birthday: '',
+        sex: '',
+        idcard: '',
+        telephone: '',
+        education: '',
+        title: '',
+        post: '',
         email: '',
-        mobile: '',
-        status: 1,
-        roles: []
+        belongDepart: '',
+        enabled: ''
       }
     },
     // 显示编辑界面
@@ -186,11 +234,11 @@ export default {
       this.dialogVisible = true
       this.operation = false
       this.dataForm = Object.assign({}, params.row)
-      let userRoles = []
+      /* let userRoles = []
       for (let i = 0, len = params.row.roles.length; i < len; i++) {
         userRoles.push(params.row.roles[i].id)
       }
-      this.dataForm.roles = userRoles
+      this.dataForm.roles = userRoles */
     },
     // 编辑
     submitForm: function () {
@@ -198,8 +246,9 @@ export default {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.editLoading = true
+            debugger
             let params = Object.assign({}, this.dataForm)
-            let userRoles = []
+            /* let userRoles = []
             if (params.roles !== null) {
               for (let i = 0, len = params.roles.length; i < len; i++) {
                 let userRole = {
@@ -208,9 +257,9 @@ export default {
                 userRoles.push(userRole)
               }
             }
-            params.roles = userRoles
+            params.roles = userRoles */
             if (this.type === 1) {
-              this.$api.user.add(params).then((res) => {
+              this.$api.healthPerson.add(params).then((res) => {
                 this.editLoading = false
                 if (res.status === 1) {
                   this.$message({ message: '操作成功', type: 'success' })
@@ -222,7 +271,7 @@ export default {
                 this.findPage(null)
               })
             } else {
-              this.$api.user.update(params).then(res => {
+              this.$api.healthPerson.update(params).then(res => {
                 this.editLoading = false
                 if (res.status === 1) {
                   this.$message({ message: '操作成功', type: 'success' })
@@ -248,9 +297,9 @@ export default {
       })
     },
     // 菜单树选中
-    deptTreeCurrentChangeHandle (data, node) {
-      this.dataForm.deptId = data.id
-      this.dataForm.deptName = data.name
+    organTreeCurrentChangeHandle (data, node) {
+      this.dataForm.organId = data.id
+      this.dataForm.organName = data.name
     },
     // 时间格式化
     dateFormat: function (row, column, cellValue, index) {
@@ -283,12 +332,15 @@ export default {
     initColumns: function () {
       this.columns = [
         // {prop: 'id', label: 'ID', minWidth: 50},
-        {prop: 'name', label: '用户名', minWidth: 120},
-        {prop: 'deptName', label: '机构', minWidth: 120},
-        {prop: 'roleNames', label: '角色', minWidth: 100, formatter: this.roleFormat},
-        {prop: 'email', label: '邮箱', minWidth: 120},
-        {prop: 'mobile', label: '手机', minWidth: 100},
-        {prop: 'status', label: '状态', minWidth: 70, formatter: this.statusFormat}
+        {prop: 'organName', label: '机构名称', minWidth: 120},
+        {prop: 'jobNumber', label: '人员工号', minWidth: 120},
+        {prop: 'name', label: '人员姓名', minWidth: 100},
+        {prop: 'birthday', label: '出生日期', minWidth: 120, formatter: this.dateFormat},
+        // {prop: 'sex', label: '性别', minWidth: 100},
+        {prop: 'idcard', label: '身份证号', minWidth: 200},
+        {prop: 'telephone', label: '联系电话', minWidth: 100},
+        {prop: 'belongDepart', label: '所属科室', minWidth: 100},
+        {prop: 'enabled', label: '启用状态', minWidth: 100}
         // {prop:'createBy', label:'创建人', minWidth:120},
         // {prop:'createTime', label:'创建时间', minWidth:120, formatter:this.dateFormat}
         // {prop:'lastUpdateBy', label:'更新人', minWidth:100},
