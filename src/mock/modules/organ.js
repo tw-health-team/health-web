@@ -5,7 +5,7 @@
 // 保存
 export function save () {
   return {
-    url: 'dept/save',
+    url: 'organ/save',
     type: 'post',
     data: {
       'code': 200,
@@ -17,7 +17,7 @@ export function save () {
 // 批量删除
 export function batchDelete () {
   return {
-    url: 'dept/delete',
+    url: 'organ/delete',
     type: 'post',
     data: {
       'code': 200,
@@ -26,7 +26,7 @@ export function batchDelete () {
     }
   }
 }
-export function findDeptTree (params) {
+export function findOrganTree (params) {
   // 查询机构树
   let findTreeData = {
     'code': 200,
@@ -56,7 +56,7 @@ export function findDeptTree (params) {
   }
   findTreeData.data = content
   return {
-    url: 'dept/findTree',
+    url: 'organ/findTree',
     type: 'get',
     data: findTreeData
   }
