@@ -42,44 +42,75 @@
   </hm-table>
   <!--新增编辑界面-->
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-    <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
-      label-position="right">
+    <el-form :model="dataForm"  :rules="dataFormRules" ref="dataForm" 
+    label-width="80px" :size="size" style="text-align:left;">
       <!-- <el-form-item label="ID" prop="id" v-if="false">
         <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
       </el-form-item> -->
+      <!-- <div class="form-item-wrap"> -->
+          <el-form-item label="参数类型" prop="paramTypeCode">
+            <el-select v-model="dataForm.paramTypeCode" placeholder="请选择"
+                style="width: 100%;">
+              <el-option v-for="item in this.getParamType" :key="item.id"
+                :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+      <!-- </div> -->
       <el-form-item label="参数编码" prop="id">
-        <el-input v-model="dataForm.id" auto-complete="off" :readonly="!operation"></el-input>
+        <el-input v-model="dataForm.id" auto-complete="off" :readonly="!operation" maxlength="25" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="参数名称" prop="name">
-        <el-input v-model="dataForm.name" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="参数值" prop="value">
-        <el-input v-model="dataForm.value" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="最大值" prop="maxValue">
-        <el-input v-model="dataForm.maxValue" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="最小值" prop="minValue">
-        <el-input v-model="dataForm.minValue" auto-complete="off"></el-input>
+        <el-input v-model="dataForm.name" auto-complete="off" maxlength="50" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="参数说明" prop="description">
-        <el-input v-model="dataForm.description" auto-complete="off"></el-input>
+        <el-input v-model="dataForm.description" auto-complete="off" maxlength="125" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item label="参数值说明" prop="valueDescription">
-        <el-input v-model="dataForm.valueDescription" auto-complete="off"></el-input>
+       <div class="form-item-wrap">
+        <el-form-item label="值类型" prop="valueTypeCode">
+          <el-select v-model="dataForm.valueTypeCode" placeholder="请选择"
+              style="width: 100%;">
+            <el-option v-for="item in this.getValueType" :key="item.id"
+              :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="输入方式" prop="inputTypeCode">
+          <el-select v-model="dataForm.inputTypeCode" placeholder="请选择"
+              style="width: 100%;">
+            <el-option v-for="item in this.getInputType" :key="item.id"
+              :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      </div>
+      <el-form-item label="参数值" prop="value">
+        <el-input v-model="dataForm.value" auto-complete="off" maxlength="250" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item label="输入方式" prop="inputTypeCode">
-        <el-input v-model="dataForm.inputTypeCode" auto-complete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="参数值类型" prop="valueTypeCode">
-        <el-input v-model="dataForm.valueTypeCode" auto-complete="off"></el-input>
+      
+      <div class="form-item-wrap">
+        <el-form-item label="最小值" prop="minValue">
+          <el-input v-model="dataForm.minValue" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="最大值" prop="maxValue">
+          <el-input v-model="dataForm.maxValue" auto-complete="off"></el-input>
+        </el-form-item>
+      </div>
+       <el-form-item label="值说明" prop="valueDescription">
+        <el-input v-model="dataForm.valueDescription" auto-complete="off" maxlength="125" show-word-limit></el-input>
       </el-form-item>
       <el-form-item label="取值SQL" prop="getValueSql">
-        <el-input v-model="dataForm.getValueSql" auto-complete="off"></el-input>
+        <el-input v-model="dataForm.getValueSql" auto-complete="off" maxlength="250" show-word-limit></el-input>
       </el-form-item>
-      <el-form-item label="参数类型" prop="paramTypeCode">
-        <el-input v-model="dataForm.paramTypeCode" auto-complete="off"></el-input>
-      </el-form-item>
+       <el-form-item label="记录状态" prop="delFlag">
+          <el-select v-model="dataForm.delFlag" placeholder="请选择"
+              style="width: 100%;">
+            <el-option v-for="item in this.getDelFlag" :key="item.id"
+              :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+      
       <!-- <el-form-item label="机构" prop="deptName">
         <popup-tree-input
           :data="deptData"
@@ -113,6 +144,7 @@ import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
+import { mapState, mapGetters } from 'vuex'
 export default {
   components: {
     PopupTreeInput,
@@ -153,7 +185,8 @@ export default {
         inputTypeCode: '',
         valueTypeCode: '',
         getValueSql: '',
-        paramTypeCode: ''
+        paramTypeCode: '',
+        delFlag: ''
       },
       deptData: [],
       deptTreeProps: {
@@ -162,6 +195,26 @@ export default {
       },
       roles: [],
       type: 1 // 1 新增 2 修改
+    }
+  },
+  computed: {
+    ...mapState('dict', [
+      'dicProps'
+    ]),
+    ...mapGetters('dict', {
+      getDic: 'getDic'
+    }),
+    getInputType () {
+      return this.getDic('inputType')
+    },
+    getValueType () {
+      return this.getDic('valueType')
+    },
+    getParamType () {
+      return this.getDic('paramType')
+    },
+    getDelFlag () {
+      return this.getDic('delFlag')
     }
   },
   methods: {
@@ -197,7 +250,8 @@ export default {
         inputTypeCode: '',
         valueTypeCode: '',
         getValueSql: '',
-        paramTypeCode: ''
+        paramTypeCode: '',
+        delFlag: ''
       }
     },
     // 显示编辑界面
@@ -260,9 +314,27 @@ export default {
     //   }
     //   return roles
     // },
-    // 状态格式化
-    statusFormat: function (row, column, cellValue, index) {
-      return row.status === 1 ? '正常' : '锁定中'
+    // 列值格式化
+    delFlagFormat: function (row, column, cellValue, index) {
+      return row.delFlag === '0' ? '正常' : '禁用'
+    },
+    paramTypeFormat: function (row, column, cellValue, index) {
+      return row.paramTypeCode === '0' ? '框架参数' : '业务参数'
+    },
+    inputTypeFormat: function (row, column, cellValue, index) {
+      return row.inputTypeCode === '0' ? '手工输入' : '列表选择'
+    },
+    valueTypeFormat: function (row, column, cellValue, index) {
+      var val = ''
+      if(row.valueTypeCode === '0') {
+        val = '字符串'
+      }else if(row.valueTypeCode === '1') {
+        val = '整型'
+      }else 
+      {
+        val = '时间'
+      }
+      return val
     },
     // 处理表格列过滤显示
     displayFilterColumnsDialog: function () {
@@ -276,35 +348,48 @@ export default {
     // 处理表格列过滤显示
     initColumns: function () {
       this.columns = [
+        {prop: 'paramTypeCode', label: '参数类型', minWidth: 120, formatter: this.paramTypeFormat},
         {prop: 'id', label: '参数编码', minWidth: 120},
         {prop: 'name', label: '参数名称', minWidth: 120},
+        {prop: 'description', label: '参数说明', minWidth: 120},
+        {prop: 'valueTypeCode', label: '参数值类型', minWidth: 120, formatter: this.valueTypeFormat},
         {prop: 'value', label: '参数值', minWidth: 120},
         {prop: 'maxValue', label: '最大值', minWidth: 120},
         {prop: 'minValue', label: '最小值', minWidth: 120},
-        {prop: 'description', label: '参数说明', minWidth: 120},
         {prop: 'valueDescription', label: '参数值说明', minWidth: 120},
-        {prop: 'inputTypeCode', label: '输入方式', minWidth: 120},
-        {prop: 'valueTypeCode', label: '参数值类型', minWidth: 120},
+        {prop: 'inputTypeCode', label: '输入方式', minWidth: 120, formatter: this.inputTypeFormat},
         {prop: 'getValueSql', label: '取值SQL', minWidth: 120},
-        {prop: 'paramTypeCode', label: '参数类型', minWidth: 120},
-        {prop: 'status', label: '状态', minWidth: 70, formatter: this.statusFormat}
+        {prop: 'delFlag', label: '记录状态', minWidth: 120, formatter: this.delFlagFormat}
         // {prop:'createBy', label:'创建人', minWidth:120},
         // {prop:'createTime', label:'创建时间', minWidth:120, formatter:this.dateFormat}
         // {prop:'lastUpdateBy', label:'更新人', minWidth:100},
         // {prop:'lastUpdateTime', label:'更新时间', minWidth:120, formatter:this.dateFormat}
       ]
       this.filterColumns = this.columns // JSON.parse(JSON.stringify(this.columns))
+    },
+    fetchDics () {
+      /**
+       * 请求字典数据
+       */
+      if (!this.getDictByType) {
+        // 获取机构字典
+        this.dicProps.param.forEach(prop => {
+          this.$store.dispatch('dict/getDictByType', prop)
+        })
+      }
     }
   },
   mounted () {
     this.initColumns()
+    this.fetchDics()
   }
 }
 </script>
 
-<style scoped>
-.hide{
-  width: 0;
-  position: absolute
-}
+<style scoped lang="scss">
+  @import "@/assets/css/detail.scss";
+  .el-button+.el-button--mini {
+    margin-left: 0px;
+    margin-top: 2px;
+  }
 </style>
