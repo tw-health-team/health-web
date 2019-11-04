@@ -42,8 +42,7 @@
   </hm-table>
   <!--新增编辑界面-->
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
-    <el-form :model="dataForm"  :rules="dataFormRules" ref="dataForm" 
-    label-width="80px" :size="size" style="text-align:left;">
+    <el-form :model="dataForm"  :rules="dataFormRules" ref="dataForm" label-width="80px" :size="size" style="text-align:left;">
       <!-- <el-form-item label="ID" prop="id" v-if="false">
         <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
       </el-form-item> -->
@@ -87,7 +86,6 @@
       <el-form-item label="参数值" prop="value">
         <el-input v-model="dataForm.value" auto-complete="off" maxlength="250" show-word-limit></el-input>
       </el-form-item>
-      
       <div class="form-item-wrap">
         <el-form-item label="最小值" prop="minValue">
           <el-input v-model="dataForm.minValue" auto-complete="off"></el-input>
@@ -110,7 +108,6 @@
             </el-option>
           </el-select>
         </el-form-item>
-      
       <!-- <el-form-item label="机构" prop="deptName">
         <popup-tree-input
           :data="deptData"
@@ -326,12 +323,11 @@ export default {
     },
     valueTypeFormat: function (row, column, cellValue, index) {
       var val = ''
-      if(row.valueTypeCode === '0') {
+      if (row.valueTypeCode === '0') {
         val = '字符串'
-      }else if(row.valueTypeCode === '1') {
+      } else if (row.valueTypeCode === '1') {
         val = '整型'
-      }else 
-      {
+      } else {
         val = '时间'
       }
       return val
