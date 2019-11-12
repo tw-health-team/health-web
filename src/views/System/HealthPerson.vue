@@ -44,7 +44,7 @@
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
       label-position="right">
-      <el-form-item label="所属机构" prop="organName">
+      <!-- <el-form-item label="所属机构" prop="organName">
         <popup-tree-input
           :data="deptData"
           :props="deptTreeProps"
@@ -52,7 +52,13 @@
           :nodeKey="''+dataForm.organId"
           :currentChangeHandle="organTreeCurrentChangeHandle">
         </popup-tree-input>
-      </el-form-item>
+      </el-form-item> -->
+      <el-form-item label="所属机构" prop="organName">
+          <popup-tree-input
+            :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.organName==null?'顶级机构':dataForm.organName"
+            :nodeKey="''+dataForm.organId" :currentChangeHandle="organTreeCurrentChangeHandle">
+          </popup-tree-input>
+        </el-form-item>
       <el-form-item label="人员工号" prop="jobNumber">
         <el-input v-model="dataForm.jobNumber" auto-complete="off"></el-input>
       </el-form-item>
@@ -172,8 +178,8 @@ export default {
         belongDepart: '',
         enabled: ''
       },
-      deptData: [],
-      deptTreeProps: {
+      popupTreeData: [],
+      popupTreeProps: {
         label: 'name',
         children: 'children'
       },
@@ -290,13 +296,13 @@ export default {
         }
       })
     },
-    // 获取部门列表
-    findDeptTree: function () {
-      this.$api.dept.findDeptTree().then((res) => {
-        this.deptData = res.data
+    // 获取机构列表
+    findOrganData: function () {
+      this.$api.organ.findOrganTree().then((res) => {
+        this.popupTreeData = res.data
       })
     },
-    // 菜单树选中
+    // 机构树选中
     organTreeCurrentChangeHandle (data, node) {
       this.dataForm.organId = data.id
       this.dataForm.organName = data.name
@@ -304,16 +310,6 @@ export default {
     // 时间格式化
     dateFormat: function (row, column, cellValue, index) {
       return format(row[column.property])
-    },
-    // 角色格式化
-    roleFormat: function (row, column, cellValue, index) {
-      let roles = []
-      if (row.roles != null && row.roles.length > 0) {
-        row.roles.forEach(element => {
-          roles.push(element.name + '；')
-        })
-      }
-      return roles
     },
     // 状态格式化
     statusFormat: function (row, column, cellValue, index) {
@@ -350,7 +346,7 @@ export default {
     }
   },
   mounted () {
-    this.findDeptTree()
+    this.findOrganData()
     this.initColumns()
   }
 }
