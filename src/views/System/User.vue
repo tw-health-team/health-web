@@ -1,22 +1,16 @@
 <template>
-  <div class="page-container">
+  <div ref="pageContainer" class="page-container">
   <!--工具栏-->
-  <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-    <el-form :inline="true" :model="filters" :size="size">
-      <el-form-item>
-        <el-input v-model="filters.name" placeholder="用户名"></el-input>
-      </el-form-item>
-      <el-form-item>
+  <div class="list-select__container">
+    <el-row :gutter="24" type="flex" justify="start" align="top">
+      <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+        <el-input v-model="filters.name" size="small" placeholder="用户名"></el-input>
+      </el-col>
+      <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
         <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findPage(null)"/>
-      </el-form-item>
-      <el-form-item>
         <hm-button icon="fa fa-plus" label="新增" perms="system:user:add" type="primary" @click="handleAdd" />
-      </el-form-item>
-    </el-form>
-  </div>
-  <div class="toolbar" style="float:right;padding-top:10px;padding-right:15px;">
-    <el-form :inline="true" :size="size">
-      <el-form-item>
+      </el-col>
+      <!-- <el-col :offset="4" :span="6" :sm="6" :md="4" :lg="6">
         <el-button-group>
         <el-tooltip content="刷新" placement="top">
           <el-button icon="fa fa-refresh" @click="findPage(null)"></el-button>
@@ -24,19 +18,16 @@
         <el-tooltip content="列显示" placement="top">
           <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
         </el-tooltip>
-        <!-- <el-tooltip content="导出" placement="top">
-          <el-button icon="fa fa-file-excel-o"></el-button>
-        </el-tooltip> -->
         </el-button-group>
-      </el-form-item>
-    </el-form>
-    <!--表格显示列界面-->
-    <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
-      @handleFilterColumns="handleFilterColumns">
-    </table-column-filter-dialog>
+      </el-col> -->
+      <!--表格显示列界面-->
+      <!-- <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
+        @handleFilterColumns="handleFilterColumns">
+      </table-column-filter-dialog> -->
+    </el-row>
   </div>
   <!--表格内容栏-->
-  <hm-table :height="350" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
+  <hm-table :height="tableHeight" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
     :data="pageResult" :columns="filterColumns"
     @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
   </hm-table>
@@ -44,8 +35,8 @@
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
       label-position="right">
-      <input type="password" v-if="false" id="loginPassword"/>
-      <input type="text" v-if="false" id="loginUserName"/>
+      <input type="password" class="hide" id="loginPassword"/>
+      <input type="text" class="hide" id="loginUserName"/>
       <el-form-item label="ID" prop="id" v-if="false">
         <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
       </el-form-item>
@@ -103,6 +94,7 @@ export default {
   },
   data () {
     return {
+      tableHeight: null,
       size: 'small',
       filters: {
         name: ''
@@ -298,12 +290,33 @@ export default {
     }
   },
   mounted () {
+    // window.innerHeight:浏览器的可用高度
+    this.tableHeight = window.innerHeight - 250
+    // 赋值vue的this
+    const that = this
+    // window.onresize中的this指向的是window，不是指向vue
+    window.onresize = () => {
+      return (() => {
+        that.tableHeight = window.innerHeight - 250
+      })()
+    }
     this.findOrganTree()
     this.initColumns()
+  },
+  watch: {
+    tableHeight (val) {
+      this.tableHeight = val
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+.hide{
+  width: 0px;
+  height: 0px;
+  padding: 0px;
+  border: 0px;
+  position: absolute
+}
 </style>

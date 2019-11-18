@@ -76,6 +76,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~theme";
 .menu-bar-container {
   position: fixed;
   top: 0px;
@@ -84,15 +85,15 @@ export default {
   z-index: 1020;
   .el-menu {
     position:absolute;
-    top: 60px;
+    top: $header-height;
     bottom: 0px;
     text-align: left;
   }
   .logo {
     position:absolute;
     top: 0px;
-    height: 60px;
-    line-height: 60px;
+    height: $header-height;
+    line-height: $header-height;
     background: rgb(20, 136, 154);
     cursor:pointer;
     img {

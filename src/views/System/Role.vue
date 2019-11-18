@@ -1,18 +1,17 @@
 <template>
   <div class="page-container">
     <!--工具栏-->
-    <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-      <el-form :inline="true" :model="filters" :size="size">
-        <el-form-item>
-          <el-input v-model="filters.name" placeholder="角色名"></el-input>
-        </el-form-item>
-        <el-form-item>
+    <div class="toolbar">
+      <el-row :gutter="24" type="flex" justify="start" align="top">
+        <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+          <el-input v-model="filters.name" size="small" placeholder="角色名"></el-input>
+        </el-col>
+        <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
           <hm-button icon="fa fa-search" label="查询" perms="system:role:list" type="primary" @click="findPage(null)"/>
-        </el-form-item>
-        <el-form-item>
           <hm-button icon="fa fa-plus" label="新增" perms="system:role:add" type="primary" @click="handleAdd" />
-        </el-form-item>
-      </el-form>
+          <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
+        </el-col>
+      </el-row>
     </div>
     <!--表格内容栏-->
     <hm-table :height="220" permsEdit="system:role:update" permsDelete="system:role:remove" :highlightCurrentRow="true" :stripe="false"
