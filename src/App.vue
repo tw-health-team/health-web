@@ -27,5 +27,6 @@ body,
   height: 100vh;
   // min-height: 768px;
   overflow: hidden;
+  font-size: 12px;
 }
 </style>

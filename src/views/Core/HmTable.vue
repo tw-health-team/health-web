@@ -20,7 +20,7 @@
       </el-table-column>
     </el-table>
     <!--分页栏-->
-    <div class="toolbar" style="padding:10px;">
+    <div class="toolbar clearfix">
       <hm-button label="批量删除" :perms="permsDelete" :size="size" type="danger" @click="handleBatchDelete()"
         :disabled="this.selections.length===0" style="float:left;" v-if="showBatchDelete & showOperation"/>
       <el-pagination layout="total, sizes, prev, pager, next, jumper"
@@ -172,5 +172,17 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
 
+/* Hides from IE-mac \*/
+* html .clearfix {
+  height: 1%;
+}
+/* End hide from IE-mac */
 </style>

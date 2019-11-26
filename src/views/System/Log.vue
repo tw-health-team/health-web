@@ -72,13 +72,13 @@ export default {
   },
   mounted () {
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 250
+    this.tableHeight = window.innerHeight - 220
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 250
+        that.tableHeight = window.innerHeight - 220
       })()
     }
   },

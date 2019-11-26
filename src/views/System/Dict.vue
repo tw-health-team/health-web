@@ -2,7 +2,7 @@
   <div class="page-container">
     <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
       <el-col :span="5">
-        <div class="tree-select__container">
+        <div class="tree-container">
           <div class="tree-select-wrap">
             <el-row :gutter="24" type="flex" justify="start" align="top">
               <el-col :span="18">
@@ -38,7 +38,7 @@
           </el-row>
         </div>
         <!--表格内容栏-->
-        <el-table ref="dictTable" :data="tableData" stripe size="mini"
+        <el-table ref="dictTable" :height="tableHeight" :data="tableData" stripe size="mini"
           rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column
             prop="itemName" header-align="center" align="center" width="150" label="项目名">
@@ -320,15 +320,14 @@ export default {
   mounted () {
     // 获取字典分类树
     this.findDictClassTree()
-
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 250
+    this.tableHeight = window.innerHeight - 180
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 250
+        that.tableHeight = window.innerHeight - 180
       })()
     }
   },
@@ -350,8 +349,8 @@ export default {
 
 <style scoped lang="scss">
 @import "~theme";
-.content-container,.dict-type-tree{
-  height: 100%;
+.dict-type-tree{
+  height: calc(100% - 62px);
 }
 .el-col+.el-col {
   padding-left:0px !important;
