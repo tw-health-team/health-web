@@ -5,10 +5,10 @@
     <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
       <el-form :inline="true" :model="filters" :size="size">
         <el-form-item>
-          <el-input v-model="filters.deptCode" placeholder="科室代码"></el-input>
+          <el-input v-model="filters.deptCode" placeholder="请输入科室代码"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="filters.deptName" placeholder="科室名称"></el-input>
+          <el-input v-model="filters.deptName" placeholder="请输入科室名称、拼音或五笔"></el-input>
         </el-form-item>
         <el-form-item>
           <hm-button icon="fa fa-search" label="查询" perms="system:deptCenter:list" type="primary" @click="findTreeData(null)"/>
@@ -19,7 +19,7 @@
       </el-form>
     </div>
         <!--表格树内容栏-->
-    <el-table :data="tableTreeDdata" stripe size="mini" style="width: 100%;"
+    <el-table :data="tableTreeData" stripe size="mini" style="width: 100%;"
       rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
       <el-table-column
         prop="id" header-align="center" treeKey="id" width="150" label="科室代码">
@@ -28,10 +28,10 @@
         prop="name" header-align="center" align="center" width="120" label="科室名称">
       </el-table-column>
       <el-table-column
-        prop="category" header-align="center" align="center" label="科室类别">
+        prop="categoryName" header-align="center" align="center" label="科室类别">
       </el-table-column>
       <el-table-column
-        prop="runk" header-align="center" align="center" label="科室级别">
+        prop="runkName" header-align="center" align="center" label="科室级别">
       </el-table-column>
       <el-table-column
         prop="remarks" header-align="center" align="center" label="备注">
@@ -43,37 +43,53 @@
         prop="createTime" header-align="center" align="center" label="创建时间" :formatter="dateFormat">
       </el-table-column>
       <el-table-column
-        fixed="right" header-align="center" align="center" width="185" label="操作">
+        fixed="right" header-align="center" align="left" width="250" label="操作">
         <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:deptCenter:update" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:deptCenter:remove" type="danger" @click="handleDelete(scope.row)"/>
+          <hm-button icon="fa fa-edit" label="编辑" perms="system:deptCenter:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+          <hm-button icon="fa fa-plus" label="添加下级" perms="system:deptCenter:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
+          <hm-button icon="fa fa-trash" label="删除" perms="system:deptCenter:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
         </template>
       </el-table-column>
     </el-table>
     <!--新增编辑界面-->
-    <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="editDialogVisible" :close-on-click-modal="false">
-      <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size">
+    <el-dialog :title="!dataForm.id ? '新增' : '修改'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+      <el-form :model="dataForm" label-width="80px" :rules="dataRule" ref="dataForm" :size="size">
         <el-form-item label="科室编码" prop="id" >
-          <el-input v-model="dataForm.id" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.id" :disabled="this.type !== 1" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="科室名称" prop="name">
           <el-input v-model="dataForm.name" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="科室类别" prop="category">
-          <el-input v-model="dataForm.category" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="科室级别" prop="runk">
-          <el-input v-model="dataForm.runk" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="上级科室 " prop="parent_id">
-          <el-input v-model="dataForm.parent_id" auto-complete="off" ></el-input>
+        <div class="form-item-wrap">
+          <el-form-item label="科室类别" prop="category">
+            <el-select v-model="dataForm.category" placeholder="请选择"
+                style="width: 100%;">
+              <el-option v-for="item in this.getCategory" :key="item.id"
+                :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="科室级别" prop="runk">
+            <el-select v-model="dataForm.runk" placeholder="请选择"
+                style="width: 100%;">
+              <el-option v-for="item in this.getRunk" :key="item.id"
+                :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+        <el-form-item label="上级科室" prop="parentName">
+          <popup-tree-input
+            :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级菜单':dataForm.parentName"
+            :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
+          </popup-tree-input>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
           <el-input v-model="dataForm.remarks" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button :size="size" @click.native="editDialogVisible = false">取消</el-button>
+        <el-button :size="size" @click.native="dialogVisible = false">取消</el-button>
         <el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">提交</el-button>
       </div>
     </el-dialog>
@@ -83,23 +99,29 @@
 <script>
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
+import TableTreeColumn from '@/views/Core/TableTreeColumn'
+import PopupTreeInput from '@/components/PopupTreeInput'
 import { format } from '@/utils/datetime'
+import { mapState, mapGetters } from 'vuex'
 export default {
   components: {
     HmTable,
-    HmButton
+    HmButton,
+    TableTreeColumn,
+    PopupTreeInput
   },
   data () {
     return {
       size: 'small',
+      loading: false,
       filters: {
         deptCode: '',
         deptName: ''
       },
-      tableTreeDdata: [],
+      tableTreeData: [],
       pageResult: {},
       operation: false, // true:新增, false:编辑
-      editDialogVisible: false, // 新增编辑界面是否显示
+      dialogVisible: false, // 新增编辑界面是否显示
       editLoading: false,
       dataFormRules: {
         label: [
@@ -109,51 +131,135 @@ export default {
       // 新增编辑界面数据
       dataForm: {
         id: '',
-        label: '',
-        value: '',
-        type: '',
-        sort: 0,
-        description: '',
-        remarks: ''
+        name: '',
+        category: '',
+        runk: '',
+        remarks: '',
+        parentId: '',
+        parentName: ''
       },
+      popupTreeData: [],
+      popupTreeProps: {
+        label: 'name',
+        children: 'children'
+      },
+      dataRule: {
+        id: [
+          { required: true, message: '科室编码不能为空', trigger: 'change' }
+        ],
+        name: [
+          { required: true, message: '科室名称不能为空', trigger: 'change' }
+        ],
+        parentId: [
+          { required: true, message: '上级科室不能为空', trigger: 'change' }
+        ],
+        category: [
+          { required: true, message: '科室类别不能为空', trigger: 'change' }
+        ],
+        runk: [
+          { required: true, message: '科室级别不能为空', trigger: 'change' }
+        ]
+      },
+      dict: [{}],
       type: 1 // 1 新增 2 修改
     }
   },
+  computed: {
+    ...mapState('dict', [
+      'dicProps'
+    ]),
+    ...mapGetters('dict', {
+      getDic: 'getDic'
+    }),
+    getCategory () {
+      return this.getDic('category')
+    },
+    getRunk () {
+      return this.getDic('runk')
+    }
+  },
   methods: {
+    fetchDics () {
+      /**
+       * 请求字典数据
+       */
+      if (!this.getDictByType) {
+        // 获取机构字典
+        this.dicProps.deptCenter.forEach(prop => {
+          this.$store.dispatch('dict/getDictByType', prop)
+        })
+      }
+    },
     // 获取数据
     findTreeData: function () {
       this.loading = true
       let params = {id: this.filters.deptCode, name: this.filters.deptName}
       this.$api.deptCenter.findDeptCenterTree(params).then((res) => {
-        this.tableTreeDdata = res.data
+        this.tableTreeData = res.data
+        this.popupTreeData = this.getParentMenuTree(res.data)
         this.loading = false
       })
     },
-    // 批量删除
-    handleDelete: function (data) {
-      this.$api.deptCenter.batchDelete(data.params).then(data != null ? data.callback : '')
+    // 获取上级机构树
+    getParentMenuTree: function (tableTreeData) {
+      let parent = {
+        parentId: '',
+        name: '顶级菜单',
+        children: tableTreeData
+      }
+      return [parent]
+    },
+    // 机构树选中
+    handleTreeSelectChange (data, node) {
+      this.dataForm.parentId = data.id
+      this.dataForm.parentName = data.name
+    },
+    // 删除
+    handleDelete (row) {
+      this.$confirm('确认删除选中记录吗？', '提示', {
+        type: 'warning'
+      }).then(() => {
+        let params = this.getDeleteIds([], row)
+        this.$api.deptCenter.batchDelete(params).then(res => {
+          this.findTreeData()
+          if (res.status === 1) {
+            this.$message({ message: '删除成功', type: 'success' })
+          } else {
+            this.$message({ message: '删除失败,' + res.msg, type: 'error' })
+          }
+        })
+      })
+    },
+    // 获取删除的包含子机构的id列表
+    getDeleteIds (ids, row) {
+      ids.push(row.id)
+      if (row.children != null) {
+        for (let i = 0, len = row.children.length; i < len; i++) {
+          this.getDeleteIds(ids, row.children[i])
+        }
+      }
+      return ids
     },
     // 显示新增界面
-    handleAdd: function () {
+    handleAdd: function (parent = null) {
       this.type = 1
-      this.editDialogVisible = true
+      this.dialogVisible = true
       this.operation = true
       this.dataForm = {
         id: '',
-        label: '',
-        value: '',
-        type: '',
-        sort: 0,
-        description: '',
-        remarks: ''
+        name: '',
+        category: '',
+        runk: '',
+        remarks: '',
+        parentId: parent == null ? 0 : parent.id,
+        parentName: parent == null ? '' : parent.name
       }
     },
     // 显示编辑界面
-    handleEdit: function (params) {
+    handleEdit: function (row) {
       this.type = 2
-      this.editDialogVisible = true
-      this.operation = false
-      this.dataForm = Object.assign({}, params.row)
+      this.dialogVisible = true
+      Object.assign(this.dataForm, row)
     },
     // 编辑
     submitForm: function () {
@@ -171,8 +277,8 @@ export default {
                 }
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
-                this.editDialogVisible = false
-                this.findPage(null)
+                this.dialogVisible = false
+                this.findTreeData(null)
               })
             } else {
               this.$api.deptCenter.update(params).then(res => {
@@ -183,8 +289,8 @@ export default {
                 }
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
-                this.editDialogVisible = false
-                this.findPage(null)
+                this.dialogVisible = false
+                this.findTreeData(null)
               })
             }
           })
@@ -198,6 +304,7 @@ export default {
   },
   mounted () {
     this.findTreeData()
+    this.fetchDics()
   }
 }
 </script>

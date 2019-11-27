@@ -7,6 +7,10 @@ export default {
       organ: [ // 机构
         { typeCode: '1001', typeName: 'level' }, // 医疗机构级别
         { typeCode: '1002', typeName: 'classification' } // 医疗机构类型
+      ],
+      deptCenter: [ // 中心科室
+        { typeCode: '1101', typeName: 'category' }, // 医疗机构级别
+        { typeCode: '1102', typeName: 'runk' } // 医疗机构类型
       ]
     },
     dictByType: {} // 以type存储的字典数据

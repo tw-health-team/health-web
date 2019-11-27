@@ -10,6 +10,7 @@ import * as dict from './moudules/dict'
 import * as log from './moudules/log'
 import * as deptCenter from './moudules/deptCenter'
 import * as param from './moudules/param'
+import * as deptOrgan from './moudules/deptOrgan'
 
 // 默认全部导出
 export default {
@@ -21,5 +22,6 @@ export default {
   menu,
   dict,
   log,
-  param
+  param,
+  deptOrgan
 }
