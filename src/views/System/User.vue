@@ -46,14 +46,10 @@
       <el-form-item label="密码" prop="password">
         <el-input v-model="dataForm.password" type="password" auto-complete="off"></el-input>
       </el-form-item>
-      <el-form-item label="机构" prop="deptName">
-        <popup-tree-input
-          :data="deptData"
-          :props="deptTreeProps"
-          :prop="dataForm.deptName"
-          :nodeKey="''+dataForm.deptId"
-          :currentChangeHandle="deptTreeCurrentChangeHandle">
-        </popup-tree-input>
+      <el-form-item label="机构" prop="organName">
+        <OrganTreeInput :organName="dataForm.organName" :organId="dataForm.organId"
+          :currentChangeHandle="organTreeCurrentChangeHandle">
+        </OrganTreeInput>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="dataForm.email" auto-complete="off"></el-input>
@@ -80,14 +76,14 @@
 </template>
 
 <script>
-import PopupTreeInput from '@/components/PopupTreeInput'
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
+import OrganTreeInput from '@/views/Core/OrganTree'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
 export default {
   components: {
-    PopupTreeInput,
+    OrganTreeInput,
     HmTable,
     HmButton,
     TableColumnFilterDialog
@@ -116,17 +112,12 @@ export default {
         id: 0,
         name: '',
         password: '123456',
-        deptId: 1,
-        deptName: '',
+        organId: 1,
+        organName: '',
         email: '',
         mobile: '',
         status: 1,
         userRoles: []
-      },
-      deptData: [],
-      deptTreeProps: {
-        label: 'name',
-        children: 'children'
       },
       roles: [],
       type: 1 // 1 新增 2 修改
@@ -165,8 +156,8 @@ export default {
         id: 0,
         name: '',
         password: '',
-        deptId: 1,
-        deptName: '',
+        organId: 1,
+        organName: '',
         email: '',
         mobile: '',
         status: 1,
@@ -234,16 +225,10 @@ export default {
         }
       })
     },
-    // 获取机构列表
-    findOrganTree: function () {
-      this.$api.organ.findOrganTree().then((res) => {
-        this.deptData = res.data
-      })
-    },
-    // 菜单树选中
-    deptTreeCurrentChangeHandle (data, node) {
-      this.dataForm.deptId = data.id
-      this.dataForm.deptName = data.name
+    // 机构树选中
+    organTreeCurrentChangeHandle (data, node) {
+      this.dataForm.organId = data.id
+      this.dataForm.organName = data.name
     },
     // 时间格式化
     dateFormat: function (row, column, cellValue, index) {
@@ -277,7 +262,7 @@ export default {
       this.columns = [
         // {prop: 'id', label: 'ID', minWidth: 50},
         {prop: 'name', label: '用户名', minWidth: 120},
-        {prop: 'deptName', label: '机构', minWidth: 120},
+        {prop: 'organName', label: '机构', minWidth: 120},
         {prop: 'roleNames', label: '角色', minWidth: 100, formatter: this.roleFormat},
         {prop: 'email', label: '邮箱', minWidth: 120},
         {prop: 'mobile', label: '手机', minWidth: 100},
@@ -301,7 +286,6 @@ export default {
         that.tableHeight = window.innerHeight - 250
       })()
     }
-    this.findOrganTree()
     this.initColumns()
   },
   watch: {
