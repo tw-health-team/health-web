@@ -1,67 +1,47 @@
 <template>
   <div class="page-container">
-  <!--工具栏-->
-  <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-    <el-form :inline="true" :model="filters" :size="size">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item>
-            <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
-          </el-form-item>
+    <!--搜索栏-->
+    <div class="list-select__container">
+      <el-row :gutter="24" type="flex" justify="start" align="top">
+        <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+          <el-input v-model="filters.name" size="small" clearable placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
         </el-col>
-        <el-col :span="12">
-          <el-form-item>
-            <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
-          </el-form-item>
-          <el-form-item>
-            <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
-          </el-form-item>
-          <el-form-item>
-            <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-          </el-form-item>
+        <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
+          <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
+          <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
+          <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
         </el-col>
       </el-row>
-      <!-- <el-form-item>
-        <el-input v-model="filters.name" placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>
-      </el-form-item>
-      <el-form-item>
-        <hm-button icon="fa fa-plus" label="增加" perms="system:organ:add" type="primary" @click="handleAdd(null)"/>
-      </el-form-item>
-      <el-form-item>
-        <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-      </el-form-item> -->
-    </el-form>
-  </div>
-    <!--表格树内容栏-->
-    <el-table ref="organTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
-      rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
-      <el-table-column
-        prop="name" header-align="center" treeKey="id" width="150" label="名称">
-      </el-table-column>
-      <el-table-column
-        prop="parentName" header-align="center" align="center" width="120" label="上级机构">
-      </el-table-column>
-      <el-table-column
-        prop="id" header-align="center" align="center" label="机构编码">
-      </el-table-column>
-      <el-table-column
-        prop="levelName" header-align="center" align="center" label="机构级别">
-      </el-table-column>
-      <el-table-column
-        prop="classificationName" header-align="center" align="center" label="机构类别">
-      </el-table-column>
-      <el-table-column
-        fixed="right" header-align="center" align="left" width="120" label="操作">
-        <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:organ:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-plus" label="添加下级" perms="system:organ:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:organ:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
-        </template>
-      </el-table-column>
-    </el-table>
+    </div>
+    <div class="list-table__container">
+      <!--表格树内容栏-->
+      <el-table ref="organTable" :data="tableTreeData" stripe size="mini"
+        rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
+        <el-table-column
+          prop="name" header-align="center" treeKey="id" width="150" label="名称">
+        </el-table-column>
+        <el-table-column
+          prop="parentName" header-align="center" align="center" width="120" label="上级机构">
+        </el-table-column>
+        <el-table-column
+          prop="id" header-align="center" align="center" label="机构编码">
+        </el-table-column>
+        <el-table-column
+          prop="levelName" header-align="center" align="center" label="机构级别">
+        </el-table-column>
+        <el-table-column
+          prop="classificationName" header-align="center" align="center" label="机构类别">
+        </el-table-column>
+        <el-table-column
+          fixed="right" header-align="center" align="left" width="250" label="操作">
+          <template slot-scope="scope">
+            <hm-button icon="fa fa-edit" label="编辑" perms="system:organ:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+            <hm-button icon="fa fa-plus" label="添加下级" perms="system:organ:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
+            <hm-button icon="fa fa-trash" label="删除" perms="system:organ:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <!-- ------------------------------新增修改界面 begin-------------------------------- -->
     <el-dialog :title="!dataForm.id ? '新增' : '修改'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submitForm()"
@@ -98,16 +78,16 @@
           <el-form-item label="机构类别" prop="classificationCode">
             <el-select v-model="dataForm.classificationCode" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getClassification" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="dict in this.getClassification" :key="dict.classCode"
+                :label="dict.itemName" :value="dict.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="机构级别" prop="levelCode">
             <el-select v-model="dataForm.levelCode" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getLevel" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="dict in this.getLevel" :key="dict.classCode"
+                :label="dict.itemName" :value="dict.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
@@ -115,7 +95,7 @@
         <el-form-item label="联系电话" prop="phone">
           <el-input v-model="dataForm.phone" placeholder="联系电话" maxlength="20" show-word-limit></el-input>
         </el-form-item>
-        <el-form-item label="机构地址" prop="phone">
+        <el-form-item label="机构地址" prop="address">
           <el-input v-model="dataForm.address" placeholder="机构地址" maxlength="50" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="排序编号" prop="orderNum">
@@ -147,7 +127,7 @@ export default {
   },
   data () {
     return {
-      isFold: 'true', // 是否折叠所有节点
+      isFold: false, // 是否折叠所有节点
       size: 'small',
       loading: false,
       filters: {
@@ -333,10 +313,7 @@ export default {
                   this.$refs['dataForm'].resetFields()
                   this.dialogVisible = false
                 } else {
-                  this.$message({
-                    message: '操作失败, ' + res.msg,
-                    type: 'error'
-                  })
+                  this.$message({ message: '操作失败, ' + res.msg, type: 'error' })
                 }
                 this.findTreeData()
               })
@@ -374,8 +351,6 @@ export default {
 
 <style scoped lang="scss">
   @import "@/assets/css/detail.scss";
-  .el-button+.el-button--mini {
-    margin-left: 0px;
-    margin-top: 2px;
-  }
+  @import "~theme";
+
 </style>

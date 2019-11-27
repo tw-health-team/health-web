@@ -95,50 +95,54 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "~theme";
 .main-container {
   padding: 0 5px 5px;
   position: absolute;
-  top: 60px;
+  top: $header-height;
   left: 1px;
   right: 1px;
   bottom: 0px;
-  // background: rgba(56, 5, 114, 0.5);
-  .tabs {
-    position: fixed;
-    top: 60px;
-    right: 50px;
-    padding-left: 0px;
-    padding-right: 2px;
-    z-index: 1020;
-    height: 40px;
-    line-height: 40px;
-    font-size: 14px;
-    background: rgb(255, 253, 255);
-    border-color: rgba(200, 206, 206, 0.5);
-    // border-left-width: 1px;
-    // border-left-style: solid;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-  }
- .tabs-tools {
-    position: fixed;
-    top: 60px;
-    right: 0;
-    z-index: 1020;
-    height: 40px;
-    // padding: 0 10px;
-    font-size: 14px;
-    line-height: 40px;
-    cursor: pointer;
-    border-color: rgba(200, 206, 206, 0.5);
-    border-left-width: 1px;
-    border-left-style: solid;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    background: rgba(255, 255, 255, 1);
-  }
-  .tabs-tools:hover {
-    background: rgba(200, 206, 206, 1);
+  min-width: 700px;
+  .tab-container{
+    height: $tab-height;
+    .tabs {
+      position: fixed;
+      top: $header-height;
+      right: 50px;
+      padding-left: 0px;
+      padding-right: 2px;
+      z-index: 1020;
+      height: $tab-height;
+      line-height: $tab-height;
+      font-size: 14px;
+      background: rgb(255, 253, 255);
+      border-color: rgba(200, 206, 206, 0.5);
+      // border-left-width: 1px;
+      // border-left-style: solid;
+      border-bottom-width: 1px;
+      border-bottom-style: solid;
+      .tabs-tools {
+        position: fixed;
+        top: 60px;
+        right: 0;
+        z-index: 1020;
+        height: $tab-height;
+        // padding: 0 10px;
+        font-size: 14px;
+        line-height: $tab-height;
+        cursor: pointer;
+        border-color: rgba(200, 206, 206, 0.5);
+        border-left-width: 1px;
+        border-left-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        background: rgba(255, 255, 255, 1);
+      }
+      .tabs-tools:hover {
+        background: rgba(200, 206, 206, 1);
+      }
+    }
   }
   .main-content {
     position: absolute;

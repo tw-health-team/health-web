@@ -1,25 +1,63 @@
 <template>
   <div class="page-container">
-    <!--工具栏-->
-    <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-      <el-form :inline="true" :model="filters" :size="size">
-        <el-form-item>
-          <el-input v-model="filters.name" placeholder="角色名"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <hm-button icon="fa fa-search" label="查询" perms="system:role:list" type="primary" @click="findPage(null)"/>
-        </el-form-item>
-        <el-form-item>
-          <hm-button icon="fa fa-plus" label="新增" perms="system:role:add" type="primary" @click="handleAdd" />
-        </el-form-item>
-      </el-form>
-    </div>
-    <!--表格内容栏-->
-    <hm-table :height="220" permsEdit="system:role:update" permsDelete="system:role:remove" :highlightCurrentRow="true" :stripe="false"
-      :data="pageResult" :columns="columns" :showBatchDelete="false" @handleCurrentChange="handleRoleSelectChange"
-      @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-    </hm-table>
-    <!-- </el-col> -->
+    <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
+      <el-col :span="18">
+        <div class="list-title__container">
+          <span>角色列表</span>
+        </div>
+        <!--搜索栏-->
+        <div class="list-select__container">
+          <el-row :gutter="24" type="flex" justify="start" align="top">
+            <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+              <el-input v-model="filters.name" size="small" placeholder="角色名"></el-input>
+            </el-col>
+            <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
+              <hm-button icon="fa fa-search" label="查询" perms="system:role:list" type="primary" @click="findPage(null)"/>
+              <hm-button icon="fa fa-plus" label="新增" perms="system:role:add" type="primary" @click="handleAdd" />
+            </el-col>
+          </el-row>
+        </div>
+        <!--表格内容栏-->
+        <hm-table permsEdit="system:role:update" :height="tableHeight" permsDelete="system:role:remove" :highlightCurrentRow="true" :stripe="false"
+          :data="pageResult" :columns="columns" :showBatchDelete="false" @handleCurrentChange="handleRoleSelectChange"
+          @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
+        </hm-table>
+      </el-col>
+      <el-col :span="6" class="list-column__container">
+        <div class="list-title__container">
+          <span>菜单授权</span> - <span>{{selectRole.name?selectRole.name:'未选择角色'}}</span>
+        </div>
+        <!--搜索栏-->
+        <div class="list-select__container">
+          <el-row :gutter="24" type="flex" justify="start" align="top">
+            <el-col :span="18">
+              <el-input placeholder="输入名称过滤" size="small" clearable v-model="menuTree.filterText"></el-input>
+            </el-col>
+            <el-col :span="6" class="switch-wrap nopadding">
+              <el-switch v-model="menuTree.isFold" @change="expandOrFoldAllNode"></el-switch>
+            </el-col>
+          </el-row>
+        </div>
+        <el-scrollbar class="list-tree__container">
+          <el-tree :data="menuData" size="mini" show-checkbox node-key="id" :props="defaultProps"
+            ref="menuTree" :render-content="renderContent"
+            v-loading="menuLoading" element-loading-text="拼命加载中" :check-strictly="true"
+            @check-change="handleMenuCheckChange" default-expand-all :filter-node-method="filterTreeNode">
+          </el-tree>
+        </el-scrollbar>
+        <div class="toolbar">
+          <div style="float:left;padding-top:5px;">
+            <el-checkbox v-model="checkAll" @change="handleCheckAll" :disabled="this.selectRole.id == null"><b>全选</b></el-checkbox>
+          </div>
+          <div style="float:right;">
+            <hm-button label="取消" perms="system:role:update" size="mini" type="primary" @click="resetSelection"
+              :disabled="this.selectRole.id == null"/>
+            <hm-button label="提交" perms="system:role:update" size="mini" type="primary" @click="submitAuthForm"
+              :disabled="this.selectRole.id == null" :loading="authLoading"/>
+          </div>
+        </div>
+      </el-col>
+    </el-row>
     <!--新增编辑界面-->
     <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size">
@@ -38,26 +76,6 @@
         <el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">提交</el-button>
       </div>
     </el-dialog>
-    <!--角色菜单，表格树内容栏-->
-    <div class="menu-container" :v-if="true">
-      <div class="menu-header">
-        <span><B>角色菜单授权</B></span>
-      </div>
-      <el-tree :data="menuData" size="mini" show-checkbox node-key="id" :props="defaultProps"
-        style="width: 100%;pading-top:20px;" ref="menuTree" :render-content="renderContent"
-        v-loading="menuLoading" element-loading-text="拼命加载中" :check-strictly="true"
-        @check-change="handleMenuCheckChange">
-      </el-tree>
-      <div style="float:left;padding-left:24px;padding-top:12px;padding-bottom:4px;">
-        <el-checkbox v-model="checkAll" @change="handleCheckAll" :disabled="this.selectRole.id == null"><b>全选</b></el-checkbox>
-      </div>
-      <div style="float:right;padding-right:15px;padding-top:4px;padding-bottom:4px;">
-        <hm-button label="取消" perms="system:role:update" type="primary" @click="resetSelection"
-          :disabled="this.selectRole.id == null"/>
-        <hm-button label="提交" perms="system:role:update" type="primary" @click="submitAuthForm"
-          :disabled="this.selectRole.id == null" :loading="authLoading"/>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -74,6 +92,12 @@ export default {
   },
   data () {
     return {
+      // 菜单树
+      menuTree: {
+        isFold: true, // 是否折叠所有节点
+        filterText: ''
+      },
+      tableHeight: null,
       size: 'small',
       filters: {
         name: ''
@@ -81,9 +105,9 @@ export default {
       columns: [
         // {prop: 'id', label: 'ID', minWidth: 50},
         {prop: 'name', label: '角色名', minWidth: 120},
-        {prop: 'remark', label: '备注', minWidth: 120},
-        {prop: 'createBy', label: '创建人', minWidth: 120},
-        {prop: 'createTime', label: '创建时间', minWidth: 120, formatter: this.dateFormat}
+        {prop: 'remark', label: '备注', minWidth: 120}
+        // {prop: 'createBy', label: '创建人', minWidth: 120},
+        // {prop: 'createTime', label: '创建时间', minWidth: 120, formatter: this.dateFormat}
         // {prop:'lastUpdateBy', label:'更新人', minWidth:100},
         // {prop:'lastUpdateTime', label:'更新时间', minWidth:120, formatter:this.dateFormat}
       ],
@@ -118,6 +142,7 @@ export default {
     }
   },
   methods: {
+    // ------------------------------左侧列表begin-------------------------------------
     // 获取分页数据
     findPage: function (data) {
       if (data !== null) {
@@ -129,10 +154,26 @@ export default {
         this.findTreeData()
       }).then(data != null ? data.callback : '')
     },
-    // 批量删除
+    // 角色删除
     handleDelete: function (data) {
       this.$api.role.remove({ id: data.params[0] }).then(data.callback)
     },
+    // ------------------------------左侧列表end-------------------------------------
+    // ------------------------------右侧树begin-------------------------------------
+    // 展开/折叠所有节点
+    expandOrFoldAllNode () {
+      for (var i = 0; i < this.$refs.menuTree.store._getAllNodes().length; i++) {
+        this.$refs.menuTree.store._getAllNodes()[i].expanded = this.menuTree.isFold
+      }
+    },
+    // 过滤树节点
+    filterTreeNode: function (value, data) {
+      if (!value) {
+        return true
+      }
+      return data.name.indexOf(value) !== -1
+    },
+    // ------------------------------右侧树end-------------------------------------
     // 显示新增界面
     handleAdd: function () {
       this.type = 1
@@ -201,6 +242,7 @@ export default {
         return
       }
       this.selectRole = val.val
+      this.selectRoleName = this.selectRole.name
       this.$api.role.findRoleMenus({'roleId': val.val.id}).then((res) => {
         this.currentRoleMenus = res.data
         if (this.currentRoleMenus === null) {
@@ -287,15 +329,14 @@ export default {
     renderContent (h, { node, data, store }) {
       return (
         <div class="column-container">
-          <span style="text-algin:center;margin-right:80px;">{data.name}</span>
-          <span style="text-algin:center;margin-right:80px;">
+          <span style="text-algin:center;margin-right:40px;">
+            <i class={ data.icon }></i> {data.name}
+          </span>
+          <span style="text-algin:center;">
             <el-tag type={ data.type === 0 ? '' : data.type === 1 ? 'success' : 'info' } size="small">
               { data.type === 0 ? '目录' : data.type === 1 ? '菜单' : '按钮' }
             </el-tag>
           </span>
-          <span style="text-algin:center;margin-right:80px;"> <i class={ data.icon }></i></span>
-          <span style="text-algin:center;margin-right:80px;">{ data.parentName ? data.parentName : '顶级菜单' }</span>
-          <span style="text-algin:center;margin-right:80px;">{ data.url ? data.url : '\t' }</span>
         </div>)
     },
     // 时间格式化
@@ -303,19 +344,41 @@ export default {
       return format(row[column.property])
     }
   },
+  computed: {
+    treeFilterText () {
+      return this.menuTree.filterText
+    }
+  },
   mounted () {
+    // window.innerHeight:浏览器的可用高度
+    this.tableHeight = window.innerHeight - 180 - 32 - 32
+    // 赋值vue的this
+    const that = this
+    // window.onresize中的this指向的是window，不是指向vue
+    window.onresize = () => {
+      return (() => {
+        that.tableHeight = window.innerHeight - 180 - 32 - 32
+      })()
+    }
+  },
+  watch: {
+    tableHeight (val) {
+      this.tableHeight = val
+    },
+    treeFilterText (val) {
+      this.$refs.menuTree.filter(val)
+    }
   }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 .menu-container {
   margin-top: 10px;
 }
-.menu-header {
-  padding-left: 8px;
-  padding-bottom: 5px;
-  text-align: left;
-  font-size: 16px;
-  color: rgb(20, 89, 121);
+/deep/.scrollbar-wrap{
+  height: 100%;
+}
+.el-col+.el-col {
+  padding-left:0px !important;
 }
 </style>

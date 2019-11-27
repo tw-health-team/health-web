@@ -5,12 +5,14 @@ export default {
   state: {
     dicProps: { // 字典项合集
       organ: [ // 机构
-        { typeCode: '1001', typeName: 'level' }, // 医疗机构级别
-        { typeCode: '1002', typeName: 'classification' } // 医疗机构类型
+        { typeCode: '1001001', typeName: 'level' }, // 医疗机构级别
+        { typeCode: '1001002', typeName: 'classification' } // 医疗机构类型
       ],
-      deptCenter: [ // 中心科室
-        { typeCode: '1101', typeName: 'category' }, // 医疗机构级别
-        { typeCode: '1102', typeName: 'runk' } // 医疗机构类型
+      param: [ // 机构
+        { typeCode: '2001', typeName: 'inputType' }, // 参数输入方式
+        { typeCode: '2002', typeName: 'valueType' }, // 参数值类型
+        { typeCode: '2003', typeName: 'paramType' }, // 参数类型
+        { typeCode: '2004', typeName: 'delFlag' } // 参数状态
       ]
     },
     dictByType: {} // 以type存储的字典数据
@@ -41,7 +43,7 @@ export default {
     getDictByType ({commit}, payload) {
       let _this = Vue.prototype
       _this.$api.dict.findDictByType({
-        type: payload.typeCode
+        classCode: payload.typeCode
       }).then((res) => {
         if (!res.data) return
         commit('updateDic', {

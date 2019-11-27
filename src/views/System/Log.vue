@@ -1,20 +1,20 @@
 <template>
-  <div class="page-container">
-  <!--工具栏-->
-  <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-    <el-form :inline="true" :model="filters" :size="size">
-      <el-form-item>
-        <el-input v-model="filters.name" placeholder="用户名"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <hm-button icon="fa fa-search" label="查询" perms="system:log:list" type="primary" @click="findPage(null)"/>
-      </el-form-item>
-    </el-form>
-  </div>
-  <!--表格内容栏-->
-  <hm-table :height="350"
-    :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
-  </hm-table>
+  <div ref="pageContainer" class="page-container">
+    <!--搜索栏-->
+    <div class="list-select__container">
+      <el-row :gutter="24" type="flex" justify="start" align="top">
+        <el-col :span="6">
+          <el-input v-model="filters.name" size="small" placeholder="用户名"></el-input>
+        </el-col>
+        <el-col :span="6" class="nopadding">
+          <hm-button icon="fa fa-search" label="查询" perms="system:log:list" type="primary" @click="findPage(null)"/>
+        </el-col>
+      </el-row>
+    </div>
+    <!--表格内容栏-->
+    <hm-table :height="tableHeight"
+      :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    </hm-table>
   </div>
 </template>
 
@@ -29,6 +29,7 @@ export default {
   },
   data () {
     return {
+      tableHeight: null,
       size: 'small',
       filters: {
         name: ''
@@ -70,10 +71,25 @@ export default {
     }
   },
   mounted () {
+    // window.innerHeight:浏览器的可用高度
+    this.tableHeight = window.innerHeight - 220
+    // 赋值vue的this
+    const that = this
+    // window.onresize中的this指向的是window，不是指向vue
+    window.onresize = () => {
+      return (() => {
+        that.tableHeight = window.innerHeight - 220
+      })()
+    }
+  },
+  watch: {
+    tableHeight (val) {
+      this.tableHeight = val
+    }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 
 </style>

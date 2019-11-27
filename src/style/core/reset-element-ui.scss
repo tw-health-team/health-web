@@ -1,0 +1,17 @@
+@import '../theme/_colors';
+.el-message {
+  min-width: 150px!important;
+}
+.el-dialog__header .el-dialog__title {
+  font-weight: 600;
+  font-size: 16px;
+}
+.el-table__empty-text {
+  font-size: 12px;
+  color: #888;
+}
+.el-radio__inner,
+.el-checkbox__inner,
+.el-input__inner {
+  border-color: $border-color__light;
+}

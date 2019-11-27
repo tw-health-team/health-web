@@ -1,59 +1,57 @@
 <template>
   <div class="page-container">
-    <!--工具栏-->
-    <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
-      <el-form :inline="true" :model="filters" :size="size">
-        <el-form-item>
-          <el-input v-model="filters.name" placeholder="名称"></el-input>
-        </el-form-item>
-        <el-form-item>
+    <!--搜索栏-->
+    <div class="list-select__container">
+      <el-row :gutter="24" type="flex" justify="start" align="top">
+        <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+          <el-input v-model="filters.name" size="small" placeholder="名称"></el-input>
+        </el-col>
+        <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
           <hm-button icon="fa fa-search" label="查询" perms="system:resource:list" type="primary" @click="findTreeData(null)"/>
-        </el-form-item>
-        <el-form-item>
           <hm-button icon="fa fa-plus" label="新增" perms="system:resource:add" type="primary" @click="handleAdd"/>
-        </el-form-item>
-        <el-form-item>
           <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-        </el-form-item>
-      </el-form>
+        </el-col>
+      </el-row>
     </div>
-    <!--表格树内容栏-->
-    <el-table ref="resourceTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
-      rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
-      <el-table-column
-        prop="name" header-align="center" treeKey="id" width="150" label="名称">
-      </el-table-column>
-      <el-table-column header-align="center" align="center" label="图标">
-        <template slot-scope="scope">
-          <i :class="scope.row.icon || ''"></i>
-        </template>
-      </el-table-column>
-      <el-table-column prop="type" header-align="center" align="center" label="类型">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.type === 0" size="small">目录</el-tag>
-          <el-tag v-else-if="scope.row.type === 1" size="small" type="success">菜单</el-tag>
-          <el-tag v-else-if="scope.row.type === 2" size="small" type="info">按钮</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="url" header-align="center" align="center" width="150"
-        :show-overflow-tooltip="true" label="菜单URL">
-      </el-table-column>
-      <el-table-column
-        prop="permission" header-align="center" align="center" width="150"
-        :show-overflow-tooltip="true" label="授权标识">
-      </el-table-column>
-      <el-table-column
-        prop="sort" header-align="center" align="center" label="排序">
-      </el-table-column>
-      <el-table-column
-        fixed="right" header-align="center" align="center" width="185" label="操作">
-        <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:resource:update" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:resource:remove" type="danger" @click="handleDelete(scope.row)"/>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="list-table__container">
+      <!--表格树内容栏-->
+      <el-table ref="resourceTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
+        rowKey="id" v-loading="loading" element-loading-text="拼命加载中" default-expand-all>
+        <el-table-column
+          prop="name" header-align="center" treeKey="id" width="150" label="名称">
+        </el-table-column>
+        <el-table-column header-align="center" align="center" label="图标">
+          <template slot-scope="scope">
+            <i :class="scope.row.icon || ''"></i>
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" header-align="center" align="center" label="类型">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.type === 0" size="small">目录</el-tag>
+            <el-tag v-else-if="scope.row.type === 1" size="small" type="success">菜单</el-tag>
+            <el-tag v-else-if="scope.row.type === 2" size="small" type="info">按钮</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="url" header-align="center" align="center" width="150"
+          :show-overflow-tooltip="true" label="菜单URL">
+        </el-table-column>
+        <el-table-column
+          prop="permission" header-align="center" align="center" width="150"
+          :show-overflow-tooltip="true" label="授权标识">
+        </el-table-column>
+        <el-table-column
+          prop="sort" header-align="center" align="center" label="排序">
+        </el-table-column>
+        <el-table-column
+          fixed="right" header-align="center" align="center" width="185" label="操作">
+          <template slot-scope="scope">
+            <hm-button icon="fa fa-edit" label="编辑" perms="system:resource:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+            <hm-button icon="fa fa-trash" label="删除" perms="system:resource:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <!-- 新增修改界面 -->
     <el-dialog :title="!dataForm.id ? '新增' : '修改'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="submitForm()"
@@ -143,7 +141,7 @@ export default {
   },
   data () {
     return {
-      isFold: 'true', // 是否折叠所有节点
+      isFold: true, // 是否折叠所有节点
       size: 'small',
       loading: false,
       filters: {
@@ -325,5 +323,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+
 </style>

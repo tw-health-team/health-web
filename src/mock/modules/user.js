@@ -53,8 +53,8 @@ export function findPage (params) {
     obj.email = 'kitty' + (i + 1) + '@qq.com'
     obj.mobile = '18688982323'
     obj.status = 1
-    obj.deptId = 12
-    obj.deptName = 'Dev'
+    obj.organId = 12
+    obj.organName = 'Dev'
     content.push(obj)
   }
   findPageData.data.pageNum = pageNum

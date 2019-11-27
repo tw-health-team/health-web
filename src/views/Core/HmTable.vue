@@ -3,8 +3,10 @@
     <!--表格栏-->
     <el-table :data="data.records" :highlight-current-row="highlightCurrentRow" @selection-change="selectionChange"
           @current-change="handleCurrentChange" v-loading="loading" element-loading-text="拼命加载中" :border="border" :stripe="stripe"
-          :show-overflow-tooltip="showOverflowTooltip" :max-height="maxHeight" :height="height" :size="size" :align="align" style="width:100%;" >
+          :show-overflow-tooltip="showOverflowTooltip" :height="height" :size="size" :align="align"
+          style="width:100%;" >
       <el-table-column type="selection" width="40" v-if="showBatchDelete & showOperation"></el-table-column>
+      <el-table-column type="index" width="50" label="序号"></el-table-column>
       <el-table-column v-for="column in columns" header-align="center" align="center"
         :prop="column.prop" :label="column.label" :width="column.width" :min-width="column.minWidth"
         :fixed="column.fixed" :key="column.prop" :type="column.type" :formatter="column.formatter"
@@ -12,17 +14,21 @@
       </el-table-column>
       <el-table-column label="操作" width="185" fixed="right" v-if="showOperation" header-align="center" align="center">
         <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" :perms="permsEdit" :size="size" @click="handleEdit(scope.$index, scope.row)" />
+          <hm-button icon="fa fa-edit" label="编辑" :perms="permsEdit" :size="size" type="primary" @click="handleEdit(scope.$index, scope.row)" />
           <hm-button icon="fa fa-trash" label="删除" :perms="permsDelete" :size="size" type="danger" @click="handleDelete(scope.$index, scope.row)" />
         </template>
       </el-table-column>
     </el-table>
     <!--分页栏-->
-    <div class="toolbar" style="padding:10px;">
+    <div class="toolbar clearfix">
       <hm-button label="批量删除" :perms="permsDelete" :size="size" type="danger" @click="handleBatchDelete()"
         :disabled="this.selections.length===0" style="float:left;" v-if="showBatchDelete & showOperation"/>
-      <el-pagination layout="total, prev, pager, next, jumper" @current-change="refreshPageRequest"
-        :current-page="pageRequest.pageNum" :page-size="pageRequest.pageSize" :total="data.total" style="float:right;">
+      <el-pagination layout="total, sizes, prev, pager, next, jumper"
+        @current-change="refreshPageRequest"
+        @size-change="handleSizeChange"
+        :current-page="pageRequest.pageNum"
+        :page-sizes="[20, 50, 100]"
+        :page-size="pageRequest.pageSize" :total="data.total" style="float:right;">
       </el-pagination>
     </div>
   </div>
@@ -54,7 +60,7 @@ export default {
     },
     height: { // 表格高度
       type: Number,
-      default: 250
+      default: 350
     },
     showOperation: { // 是否显示操作组件
       type: Boolean,
@@ -86,13 +92,17 @@ export default {
       // 分页信息
       pageRequest: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 20
       },
       loading: false, // 加载标识
       selections: [] // 列表选中列
     }
   },
   methods: {
+    handleSizeChange (val) {
+      this.pageRequest.pageSize = val
+      this.findPage()
+    },
     // 分页查询
     findPage: function () {
       this.loading = true
@@ -155,11 +165,24 @@ export default {
     }
   },
   mounted () {
+    // 刷新页面
     this.refreshPageRequest(1)
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
 
+/* Hides from IE-mac \*/
+* html .clearfix {
+  height: 1%;
+}
+/* End hide from IE-mac */
 </style>

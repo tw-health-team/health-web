@@ -9,6 +9,7 @@ import * as menu from './moudules/menu'
 import * as dict from './moudules/dict'
 import * as log from './moudules/log'
 import * as deptCenter from './moudules/deptCenter'
+import * as healthPerson from './moudules/healthPerson'
 import * as param from './moudules/param'
 import * as deptOrgan from './moudules/deptOrgan'
 
@@ -23,5 +24,7 @@ export default {
   dict,
   log,
   param,
-  deptOrgan
+  deptOrgan,
+  healthPerson,
+  param
 }
