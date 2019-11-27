@@ -25,6 +25,5 @@ export default {
   log,
   param,
   deptOrgan,
-  healthPerson,
-  param
+  healthPerson
 }
