@@ -97,7 +97,8 @@ instance.interceptors.response.use(
       router.push('/login')
     }
     // 状态码属于异常情况
-    if (data.status !== -1 && data.status !== 1 && data.status !== 2 && data.status !== 3 && data.status !== 200) {
+    if (data.status !== -1 && data.status !== -4 &&
+       data.status !== 1 && data.status !== 2 && data.status !== 3 && data.status !== 200) {
       const err = new Error(data.msg)
       err.data = data
       err.response = response

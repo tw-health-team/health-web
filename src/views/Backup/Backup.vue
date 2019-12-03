@@ -28,7 +28,7 @@ export default {
       showHeader: false,
       backupVisible: false,
       tableLoading: false,
-      baseUrl: this.global.backupBaseUrl
+      baseUrl: this.$global.backupBaseUrl
     }
   },
   methods: {

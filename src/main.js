@@ -22,7 +22,7 @@ import '@/assets/css/index.scss'
 Vue.use(ElementUI)
 Vue.use(api)
 
-Vue.prototype.global = global
+Vue.prototype.$global = global
 
 /* eslint-disable no-new */
 new Vue({

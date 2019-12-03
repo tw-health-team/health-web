@@ -48,7 +48,7 @@ export default {
           sessionStorage.setItem('user', userInfo.username) // 保存用户到本地会话
           router.push('/') // 登录成功，跳转到主页
         } else {
-          this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+          this.$message({message: res.msg, type: 'error'})
         }
       })
     },
