@@ -27,3 +27,11 @@ export const findPage = (data) => {
 export const findPermissions = (params) => {
   return get('/system/user/permissions/{username}', null, params)
 }
+// 锁定账户
+export const lock = (params) => {
+  return post('/system/user/lock/{id}', null, params)
+}
+// 恢复账户
+export const unlock = (params) => {
+  return post('/system/user/unlock/{id}', null, params)
+}

@@ -25,13 +25,13 @@
         <!--搜索栏-->
         <div class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
-            <el-col :span="6" :xs="8" :sm="10" :md="8" :lg="6">
-              <el-input v-model="filters.searchText" size="small" clearable placeholder="输入项目名称或首拼模糊查询"></el-input>
+            <el-col :span="6" :xs="8" :sm="10" :md="10" :lg="8">
+              <el-input v-model="filters.searchText" size="small" clearable placeholder="输入名称或拼音、五笔首拼模糊查询"></el-input>
             </el-col>
-            <el-col :span="6" :xs="8" :sm="5" :md="8" :lg="6" class="nopadding">
+            <el-col :span="6" :xs="8" :sm="4" :md="6" :lg="4" class="nopadding">
               <hm-button icon="fa fa-search" label="查询" perms="system:dict:list" type="primary" @click="findList()"/>
             </el-col>
-            <el-col :span="12" :xs="8" :sm="7" :md="8" :lg="12" class="list-select-right">
+            <el-col :span="12" :xs="8" :sm="10" :md="8" :lg="12" class="list-select-right">
               <hm-button icon="fa fa-plus" label="新增" perms="system:dict:add" type="primary" @click="handleAdd" />
               <hm-button icon="fa fa-tags" label="字典分类" perms="system:dict:list" type="primary" @click="handleShowClass" />
             </el-col>
@@ -228,6 +228,10 @@ export default {
     },
     // 显示新增界面
     handleAdd: function () {
+      if (this.$global.isEmpty(this.filters.classCode)) {
+        this.$message({ message: '请先选择字典分类！', type: 'warning' })
+        return
+      }
       this.type = 1
       this.editDialogVisible = true
       this.operation = true

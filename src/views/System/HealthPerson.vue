@@ -252,7 +252,7 @@ export default {
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.editLoading = true
-            debugger
+            // debugger
             let params = Object.assign({}, this.dataForm)
             /* let userRoles = []
             if (params.roles !== null) {

@@ -9,7 +9,7 @@
       <div class="dialog-select__container">
         <el-row :gutter="24" type="flex" justify="start" align="top">
           <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="12">
-            <el-input v-model="filters.name" size="small" clearable placeholder="请输入名称、或拼音首拼模糊查询"></el-input>
+            <el-input v-model="filters.name" size="small" clearable placeholder="请输入名称、或拼音、五笔首拼模糊查询"></el-input>
           </el-col>
           <el-col :span="18" :xs="12" :sm="10" :md="8" :lg="12" class="nopadding">
             <hm-button icon="fa fa-search" label="查询" perms="system:dict:list" type="primary" @click="findTreeData(null)"/>
@@ -21,7 +21,7 @@
       <div class="dialog-table__container">
         <!--表格树内容栏-->
         <el-table ref="dictTable" :data="tableTreeData" stripe size="mini"
-          rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
+          rowKey="id" v-loading="loading" element-loading-text="拼命加载中" default-expand-all>
           <el-table-column
             prop="name" header-align="center" treeKey="id" width="150" label="名称">
           </el-table-column>
@@ -123,7 +123,7 @@ export default {
   data () {
     return {
       isShow: this.visible,
-      isFold: false, // 是否折叠所有节点
+      isFold: true, // 是否折叠所有节点
       size: 'small',
       loading: false,
       filters: {
@@ -196,10 +196,6 @@ export default {
         this.tableTreeData = res.data
         this.popupTreeData = this.getParentDictTree(res.data)
         this.loading = false
-      }).finally(() => {
-        let timeOut = setTimeout(() => {
-          this.expandOrFoldAllNode(this.isFold)
-        }, 250)
       })
     },
     // 获取上级字典树
