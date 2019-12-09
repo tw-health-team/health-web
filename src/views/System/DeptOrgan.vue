@@ -2,13 +2,12 @@
   <!-- 测试提交 -->
   <div class="page-container">
     <!--工具栏-->
-    <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
+    <div class="list-select__container">
       <el-form :inline="true" :model="filters" :size="size">
-        <el-form-item prop="parentName">
-          <popup-tree-input aria-placeholder="请选择机构"
-            :data="popupOrganTreeData" :props="popupTreeProps" :prop="organName==null?'':organName"
-            :nodeKey="organId" :currentChangeHandle="handleOrganTreeSelectChange">
-          </popup-tree-input>
+        <el-form-item label="所属机构" prop="organName">
+          <OrganTreeInput :organName="organName" :organId="organId"
+            :currentChangeHandle="handleOrganTreeSelectChange">
+          </OrganTreeInput>
         </el-form-item>
         <el-form-item>
           <el-input v-model="filters.deptId" placeholder="请输入科室代码"></el-input>
@@ -24,59 +23,59 @@
         </el-form-item>
       </el-form>
     </div>
+    <div class="list-table__container">
     <!--表格显示列界面-->
-    <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
-      @handleFilterColumns="handleFilterColumns">
-    </table-column-filter-dialog>
-    <!--表格内容栏-->
-    <hm-table :height="350" permsEdit="system:deptOrgan:update" permsDelete="system:deptOrgan:remove"
-      :data="pageResult" :columns="columns"
-      @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-    </hm-table>
+      <!--table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
+        @handleFilterColumns="handleFilterColumns">
+      </table-column-filter-dialog-->
+      <!--表格内容栏-->
+      <hm-table :height="350" permsEdit="system:deptOrgan:update" permsDelete="system:deptOrgan:remove"
+        :data="pageResult" :columns="columns" :showBatchDelete="false"
+        @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
+      </hm-table>
+    </div>
     <!--新增编辑界面-->
     <el-dialog :title="!dataForm.id ? '新增' : '修改'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" label-width="80px" :rules="dataRule" ref="dataForm" :size="size">
         <el-form-item label="科室编码" prop="deptId" >
-          <el-input v-model="dataForm.deptId" :disabled="this.type !== 1" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.deptId" :disabled="this.type !== 1" auto-complete="off" maxlength="64"></el-input>
         </el-form-item>
         <el-form-item label="科室名称" prop="deptName">
-          <el-input v-model="dataForm.deptName" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.deptName" auto-complete="off" maxlength="70"></el-input>
         </el-form-item>
         <el-form-item label="所属机构" prop="organName">
-          <popup-tree-input
-            :data="popupOrganTreeData" :props="popupTreeProps" :prop="dataForm.organName==null?'顶级菜单':dataForm.organName"
-            :nodeKey="''+dataForm.organId" :currentChangeHandle="handleOrganTreeSelectChange">
-          </popup-tree-input>
+          <OrganTreeInput :organName="dataForm.organName" :organId="dataForm.organId"
+            :currentChangeHandle="handleOrganTreeSelectChangeAdd">
+          </OrganTreeInput>
         </el-form-item>
-        <el-form-item label="卫生局科室" prop="detpCenterName">
-          <popup-tree-input
-            :data="popupDeptCenterTreeData" :props="popupDeptCenterTreeProps" :prop="dataForm.detpCenterName==null?'顶级菜单':dataForm.detpCenterName"
-            :nodeKey="''+dataForm.deptCenterId" :currentChangeHandle="handleDeptCenterTreeSelectChange">
-          </popup-tree-input>
+        <el-form-item label="卫生局科室" prop="deptCenterName">
+          <DeptCenterTreeInput :deptCenterName="dataForm.deptCenterName" :deptCenterId="dataForm.deptCenterId"
+            :currentChangeHandle="handleDeptCenterTreeSelectChange">
+          </DeptCenterTreeInput>
         </el-form-item>
         <el-form-item label="社保局科室代码" prop="deptSocialSecurityId">
-          <el-input v-model="dataForm.deptSocialSecurityId" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.deptSocialSecurityId" auto-complete="off" maxlength="64"></el-input>
         </el-form-item>
         <div class="form-item-wrap">
           <el-form-item label="门诊类型" prop="outpatientType">
             <el-select v-model="dataForm.outpatientType" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getOutpatientType" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="item in this.getOutpatientType" :key="item.classCode"
+                :label="item.itemName" :value="item.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="挂号状态" prop="registeredState">
             <el-select v-model="dataForm.registeredState" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getRegisteredState" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="item in this.getRegisteredState" :key="item.classCode"
+                :label="item.itemName" :value="item.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
         </div>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="dataForm.remarks" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.remarks" auto-complete="off" maxlength="255"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -90,7 +89,8 @@
 <script>
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
-import PopupTreeInput from '@/components/PopupTreeInput'
+import OrganTreeInput from '@/views/Core/OrganTree'
+import DeptCenterTreeInput from '@/views/Core/DeptCenterTree'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
 import { mapState, mapGetters } from 'vuex'
@@ -98,8 +98,9 @@ export default {
   components: {
     HmTable,
     HmButton,
-    PopupTreeInput,
-    TableColumnFilterDialog
+    OrganTreeInput,
+    TableColumnFilterDialog,
+    DeptCenterTreeInput
   },
   data () {
     return {
@@ -144,7 +145,7 @@ export default {
         organId: '',
         organName: '',
         deptCenterId: '',
-        detpCenterName: '',
+        deptCenterName: '',
         deptSocialSecurityId: '',
         outpatientType: '',
         outpatientTypeName: '',
@@ -197,11 +198,11 @@ export default {
     ...mapGetters('dict', {
       getDic: 'getDic'
     }),
-    getCategory () {
-      return this.getDic('category')
+    getOutpatientType () {
+      return this.getDic('outpatientType')
     },
-    getRunk () {
-      return this.getDic('runk')
+    getRegisteredState () {
+      return this.getDic('registeredState')
     }
   },
   methods: {
@@ -221,7 +222,7 @@ export default {
       if (data !== null) {
         this.pageRequest = data.pageRequest
       }
-      this.pageRequest.orgId = this.organId
+      this.pageRequest.organId = this.organId
       this.pageRequest.deptId = this.filters.deptId
       this.pageRequest.deptName = this.filters.deptName
       this.$api.deptOrgan.findPage(this.pageRequest).then((res) => {
@@ -237,55 +238,22 @@ export default {
       }
       return [parent]
     },
-    // 机构树选中
-    handleTreeSelectChange (data, node) {
-      this.organName = data.id
-      this.organName = data.name
-    },
     // 处理表格列过滤显示
     handleFilterColumns: function (data) {
       this.filterColumns = data.filterColumns
       this.$refs.tableColumnFilterDialog.setDialogVisible(false)
     },
-    // 获取机构树形结构
-    findOrganTreeData: function () {
-      let params = {name: ''}
-      this.$api.organ.list(params).then((res) => {
-        this.popupOrganTreeData = this.getOrganParentMenuTree(res.data)
-      })
-    },
-    // 获取上级机构树
-    getOrganParentMenuTree: function (organTreeData) {
-      let parent = {
-        parentId: 0,
-        name: '顶级菜单',
-        children: organTreeData
-      }
-      return [parent]
-    },
     // 机构树选中
     handleOrganTreeSelectChange (data, node) {
+      this.organId = data.id
+      this.organName = data.name
+    },
+    // 新增界面机构树选中
+    handleOrganTreeSelectChangeAdd (data, node) {
       this.dataForm.organId = data.id
       this.dataForm.organName = data.name
     },
-    // 获取中心科室
-    findDeptCenterTreeData: function () {
-      let params = {id: '', name: ''}
-      this.$api.deptCenter.findDeptCenterTree(params).then((res) => {
-        this.deptCenterTreeData = res.data
-        this.popupDeptCenterTreeData = this.getDeptCenterParentMenuTree(res.data)
-      })
-    },
-    // 获取上级中心科室
-    getDeptCenterParentMenuTree: function (deptCenterTreeData) {
-      let parent = {
-        parentId: 0,
-        name: '顶级菜单',
-        children: deptCenterTreeData
-      }
-      return [parent]
-    },
-    // 机构中心科室
+    // 中心科室选择
     handleDeptCenterTreeSelectChange (data, node) {
       this.dataForm.deptCenterId = data.id
       this.dataForm.deptCenterName = data.name
@@ -297,7 +265,7 @@ export default {
       }).then(() => {
         let params = this.getDeleteIds([], row)
         this.$api.deptOrgan.batchDelete(params).then(res => {
-          this.findTreeData()
+          this.findPage(null)
           if (res.status === 1) {
             this.$message({ message: '删除成功', type: 'success' })
           } else {
@@ -323,12 +291,18 @@ export default {
       this.operation = true
       this.dataForm = {
         id: '',
-        name: '',
-        category: '',
-        runk: '',
-        remarks: '',
-        parentId: parent == null ? 0 : parent.id,
-        parentName: parent == null ? '' : parent.name
+        deptId: '',
+        deptName: '',
+        organId: '',
+        organName: '',
+        deptCenterId: '',
+        deptCenterName: '',
+        deptSocialSecurityId: '',
+        outpatientType: '',
+        outpatientTypeName: '',
+        registeredState: '',
+        registeredStateName: '',
+        remarks: ''
       }
     },
     // 显示编辑界面
@@ -355,7 +329,7 @@ export default {
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
                 this.dialogVisible = false
-                this.findTreeData(null)
+                this.findPage(null)
               })
             } else {
               this.$api.deptOrgan.update(params).then(res => {
@@ -367,7 +341,7 @@ export default {
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
                 this.dialogVisible = false
-                this.findTreeData(null)
+                this.findPage(null)
               })
             }
           })
@@ -380,9 +354,7 @@ export default {
     }
   },
   mounted () {
-    this.findOrganTreeData()
-    this.findDeptCenterTreeData()
-    // this.fetchDics()
+    this.fetchDics()
   }
 }
 </script>

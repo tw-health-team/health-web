@@ -2,7 +2,7 @@
   <!-- 测试提交 -->
   <div class="page-container">
     <!--工具栏-->
-    <div class="toolbar" style="float:left;padding-top:10px;padding-left:15px;">
+    <div class="list-select__container">
       <el-form :inline="true" :model="filters" :size="size">
         <el-form-item>
           <el-input v-model="filters.deptCode" placeholder="请输入科室代码"></el-input>
@@ -18,74 +18,75 @@
         </el-form-item>
       </el-form>
     </div>
-        <!--表格树内容栏-->
-    <el-table :data="tableTreeData" stripe size="mini" style="width: 100%;"
-      rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
-      <el-table-column
-        prop="id" header-align="center" treeKey="id" width="150" label="科室代码">
-      </el-table-column>
-      <el-table-column
-        prop="name" header-align="center" align="center" width="120" label="科室名称">
-      </el-table-column>
-      <el-table-column
-        prop="categoryName" header-align="center" align="center" label="科室类别">
-      </el-table-column>
-      <el-table-column
-        prop="runkName" header-align="center" align="center" label="科室级别">
-      </el-table-column>
-      <el-table-column
-        prop="remarks" header-align="center" align="center" label="备注">
-      </el-table-column>
-      <el-table-column
-        prop="createBy" header-align="center" align="center" label="创建人">
-      </el-table-column>
-      <el-table-column
-        prop="createTime" header-align="center" align="center" label="创建时间" :formatter="dateFormat">
-      </el-table-column>
-      <el-table-column
-        fixed="right" header-align="center" align="left" width="250" label="操作">
-        <template slot-scope="scope">
-          <hm-button icon="fa fa-edit" label="编辑" perms="system:deptCenter:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
-          <hm-button icon="fa fa-plus" label="添加下级" perms="system:deptCenter:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
-          <hm-button icon="fa fa-trash" label="删除" perms="system:deptCenter:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="list-table__container">
+    <!--表格树内容栏-->
+      <el-table :data="tableTreeData" stripe size="mini" style="width: 100%;"
+        rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
+        <el-table-column
+          prop="id" header-align="center" treeKey="id" width="150" label="科室代码">
+        </el-table-column>
+        <el-table-column
+          prop="name" header-align="center" align="center" width="120" label="科室名称">
+        </el-table-column>
+        <el-table-column
+          prop="categoryName" header-align="center" align="center" label="科室类别">
+        </el-table-column>
+        <el-table-column
+          prop="runkName" header-align="center" align="center" label="科室级别">
+        </el-table-column>
+        <el-table-column
+          prop="remarks" header-align="center" align="center" label="备注">
+        </el-table-column>
+        <el-table-column
+          prop="createBy" header-align="center" align="center" label="创建人">
+        </el-table-column>
+        <el-table-column
+          prop="createTime" header-align="center" align="center" label="创建时间" :formatter="dateFormat">
+        </el-table-column>
+        <el-table-column
+          fixed="right" header-align="center" align="left" width="250" label="操作">
+          <template slot-scope="scope">
+            <hm-button icon="fa fa-edit" label="编辑" perms="system:deptCenter:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+            <hm-button icon="fa fa-plus" label="添加下级" perms="system:deptCenter:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
+            <hm-button icon="fa fa-trash" label="删除" perms="system:deptCenter:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
     <!--新增编辑界面-->
     <el-dialog :title="!dataForm.id ? '新增' : '修改'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" label-width="80px" :rules="dataRule" ref="dataForm" :size="size">
         <el-form-item label="科室编码" prop="id" >
-          <el-input v-model="dataForm.id" :disabled="this.type !== 1" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.id" :disabled="this.type !== 1" auto-complete="off" maxlength="64"></el-input>
         </el-form-item>
         <el-form-item label="科室名称" prop="name">
-          <el-input v-model="dataForm.name" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.name" auto-complete="off" maxlength="50"></el-input>
         </el-form-item>
         <div class="form-item-wrap">
           <el-form-item label="科室类别" prop="category">
             <el-select v-model="dataForm.category" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getCategory" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="item in this.getCategory" :key="item.classCode"
+                :label="item.itemName" :value="item.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="科室级别" prop="runk">
             <el-select v-model="dataForm.runk" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="item in this.getRunk" :key="item.id"
-                :label="item.label" :value="item.value">
+              <el-option v-for="item in this.getRunk" :key="item.classCode"
+                :label="item.itemName" :value="item.itemValue">
               </el-option>
             </el-select>
           </el-form-item>
         </div>
         <el-form-item label="上级科室" prop="parentName">
-          <popup-tree-input
-            :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级菜单':dataForm.parentName"
-            :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
-          </popup-tree-input>
+          <DeptCenterTreeInput :deptCenterName="dataForm.parentName" :deptCenterId="dataForm.parentId"
+            :currentChangeHandle="handleDeptCenterTreeSelectChange">
+          </DeptCenterTreeInput>
         </el-form-item>
         <el-form-item label="备注" prop="remarks">
-          <el-input v-model="dataForm.remarks" auto-complete="off"></el-input>
+          <el-input v-model="dataForm.remarks" auto-complete="off" maxlength="255"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -100,7 +101,7 @@
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
 import TableTreeColumn from '@/views/Core/TableTreeColumn'
-import PopupTreeInput from '@/components/PopupTreeInput'
+import DeptCenterTreeInput from '@/views/Core/DeptCenterTree'
 import { format } from '@/utils/datetime'
 import { mapState, mapGetters } from 'vuex'
 export default {
@@ -108,7 +109,7 @@ export default {
     HmTable,
     HmButton,
     TableTreeColumn,
-    PopupTreeInput
+    DeptCenterTreeInput
   },
   data () {
     return {
@@ -210,7 +211,7 @@ export default {
       return [parent]
     },
     // 机构树选中
-    handleTreeSelectChange (data, node) {
+    handleDeptCenterTreeSelectChange (data, node) {
       this.dataForm.parentId = data.id
       this.dataForm.parentName = data.name
     },
@@ -278,7 +279,7 @@ export default {
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
                 this.dialogVisible = false
-                this.findTreeData(null)
+                this.findTreeData()
               })
             } else {
               this.$api.deptCenter.update(params).then(res => {
@@ -290,7 +291,7 @@ export default {
                 this.editLoading = false
                 this.$refs['dataForm'].resetFields()
                 this.dialogVisible = false
-                this.findTreeData(null)
+                this.findTreeData()
               })
             }
           })
