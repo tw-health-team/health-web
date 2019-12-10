@@ -1,73 +1,85 @@
 <template>
   <div ref="pageContainer" class="page-container">
-  <!--工具栏-->
-  <div class="list-select__container">
-    <el-row :gutter="24" type="flex" justify="start" align="top">
-      <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
-        <el-input v-model="filters.name" size="small" placeholder="输入用户名模糊查询" clearable></el-input>
+    <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
+      <el-col :span="5">
+        <OrganTree :organName="organTree.organName" :organId="organTree.organId"
+          :currentChangeHandle="organTreeChangeHandle">
+        </OrganTree>
       </el-col>
-      <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
-        <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findPage(null)"/>
-        <hm-button icon="fa fa-plus" label="新增" perms="system:user:add" type="primary" @click="handleAdd" />
+      <el-col :span="19">
+        <div class="list-title__container">
+          <span>机构用户列表</span> - <span>{{organTree.organName?organTree.organName:'未选择机构'}}</span>
+        </div>
+        <!--工具栏-->
+        <div class="list-select__container">
+          <el-row :gutter="24" type="flex" justify="start" align="top">
+            <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
+              <el-input v-model="filters.name" size="small" placeholder="输入用户名模糊查询" clearable></el-input>
+            </el-col>
+            <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
+              <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findPage(null)"/>
+              <hm-button icon="fa fa-plus" label="新增" perms="system:user:add" type="primary" @click="handleAdd" />
+            </el-col>
+            <!-- <el-col :offset="4" :span="6" :sm="6" :md="4" :lg="6">
+              <el-button-group>
+              <el-tooltip content="刷新" placement="top">
+                <el-button icon="fa fa-refresh" @click="findPage(null)"></el-button>
+              </el-tooltip>
+              <el-tooltip content="列显示" placement="top">
+                <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
+              </el-tooltip>
+              </el-button-group>
+            </el-col> -->
+            <!--表格显示列界面-->
+            <!-- <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
+              @handleFilterColumns="handleFilterColumns">
+            </table-column-filter-dialog> -->
+          </el-row>
+        </div>
+        <!--表格内容栏-->
+        <!-- <hm-table :height="tableHeight" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
+          :data="pageResult" :columns="filterColumns"
+          @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
+        </hm-table> -->
+        <!--表格内容栏-->
+        <el-table ref="userTable" :height="tableHeight" :data="pageResult.records" stripe size="mini"
+          rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
+          <el-table-column type="index" width="50" label="序号"></el-table-column>
+          <el-table-column
+            prop="name" header-align="center" align="center" minWidth="120" label="用户名">
+          </el-table-column>
+          <el-table-column
+            prop="organName" header-align="center" align="center" minWidth="120" label="机构">
+          </el-table-column>
+          <el-table-column
+            prop="roleNames" header-align="center" align="center" minWidth="150" label="角色">
+            <template slot-scope="scope">
+              <el-tag class="role-tag" v-for="(role) in scope.row.roles" :key="role.id" size="small"
+                :type="role.name.indexOf('管理员')>-1?'primary':'info'">{{role.name}} </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="mobile" header-align="center" align="center" width="100" label="手机">
+          </el-table-column>
+          <el-table-column
+            prop="status" header-align="center" align="center" width="90" label="状态">
+            <template slot-scope="scope">
+              <el-tag v-if="scope.row.status === 1" size="small" type="success">正常</el-tag>
+              <el-tag v-else-if="scope.row.status === 0" size="small" type="warning">锁定</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column
+            fixed="right" header-align="center" align="center" width="250" label="操作">
+            <template slot-scope="scope">
+              <hm-button icon="fa fa-edit" label="编辑" perms="system:user:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
+              <hm-button icon="fa fa-lock" :label="scope.row.status === 1 ? '锁定':'恢复'" perms="system:user:update"
+                :type="scope.row.status === 1 ? 'warning':'success'" size="mini" @click="handleLock(scope.row)"/>
+              <hm-button icon="fa fa-trash" label="删除" perms="system:user:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
+            </template>
+          </el-table-column>
+        </el-table>
       </el-col>
-      <!-- <el-col :offset="4" :span="6" :sm="6" :md="4" :lg="6">
-        <el-button-group>
-        <el-tooltip content="刷新" placement="top">
-          <el-button icon="fa fa-refresh" @click="findPage(null)"></el-button>
-        </el-tooltip>
-        <el-tooltip content="列显示" placement="top">
-          <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
-        </el-tooltip>
-        </el-button-group>
-      </el-col> -->
-      <!--表格显示列界面-->
-      <!-- <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
-        @handleFilterColumns="handleFilterColumns">
-      </table-column-filter-dialog> -->
     </el-row>
-  </div>
-  <!--表格内容栏-->
-  <!-- <hm-table :height="tableHeight" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
-    :data="pageResult" :columns="filterColumns"
-    @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-  </hm-table> -->
-  <!--表格内容栏-->
-  <el-table ref="userTable" :height="tableHeight" :data="pageResult.records" stripe size="mini"
-    rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
-    <el-table-column type="index" width="50" label="序号"></el-table-column>
-    <el-table-column
-      prop="name" header-align="center" align="center" minWidth="120" label="用户名">
-    </el-table-column>
-    <el-table-column
-      prop="organName" header-align="center" align="center" minWidth="120" label="机构">
-    </el-table-column>
-    <el-table-column
-      prop="roleNames" header-align="center" align="center" minWidth="150" label="角色">
-      <template slot-scope="scope">
-        <el-tag class="role-tag" v-for="(role) in scope.row.roles" :key="role.id" size="small"
-          :type="role.name.indexOf('管理员')>-1?'primary':'info'">{{role.name}} </el-tag>
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="mobile" header-align="center" align="center" width="100" label="手机">
-    </el-table-column>
-    <el-table-column
-      prop="status" header-align="center" align="center" width="90" label="状态">
-      <template slot-scope="scope">
-        <el-tag v-if="scope.row.status === 1" size="small" type="success">正常</el-tag>
-        <el-tag v-else-if="scope.row.status === 0" size="small" type="warning">锁定</el-tag>
-      </template>
-    </el-table-column>
-    <el-table-column
-      fixed="right" header-align="center" align="center" width="250" label="操作">
-      <template slot-scope="scope">
-        <hm-button icon="fa fa-edit" label="编辑" perms="system:user:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
-        <hm-button icon="fa fa-lock" :label="scope.row.status === 1 ? '锁定':'恢复'" perms="system:user:update"
-          :type="scope.row.status === 1 ? 'warning':'success'" size="mini" @click="handleLock(scope.row)"/>
-        <hm-button icon="fa fa-trash" label="删除" perms="system:user:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
-      </template>
-    </el-table-column>
-  </el-table>
   <!-- ------------------------------新增修改界面 begin-------------------------------- -->
   <el-dialog :title="operation?'新增':'编辑'" width="40%" :visible.sync="dialogVisible" :close-on-click-modal="false">
     <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
@@ -115,11 +127,13 @@
 <script>
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
-import OrganTreeInput from '@/views/Core/OrganTree'
+import OrganTree from '@/views/Core/OrganTree'
+import OrganTreeInput from '@/views/Core/OrganTreeInput'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
 export default {
   components: {
+    OrganTree,
     OrganTreeInput,
     HmTable,
     HmButton,
@@ -127,6 +141,14 @@ export default {
   },
   data () {
     return {
+      // -----------------机构树 begin------------------
+      organTree: {
+        isFold: true, // 是否折叠所有节点
+        filterText: '',
+        organId: '',
+        organName: ''
+      },
+      // -----------------机构树 end------------------
       // -----------------列表 begin------------------
       tableHeight: null,
       loading: false,
@@ -167,6 +189,13 @@ export default {
     }
   },
   methods: {
+    // 机构树选中
+    organTreeChangeHandle (data, node) {
+      this.organTree.organId = data.id
+      this.organTree.organName = data.name
+      // 查询用户列表
+      this.findPage(null)
+    },
     // 获取分页数据
     findPage: function (data) {
       if (data !== null) {
@@ -174,6 +203,7 @@ export default {
       }
       // this.pageRequest.columnFilters = {name: {name: 'name', value: this.filters.name}}
       this.pageRequest.name = this.filters.name
+      this.pageRequest.organId = this.organTree.organId
       this.$api.user.findPage(this.pageRequest).then((res) => {
         this.pageResult = res.data
         this.findAllRoles()

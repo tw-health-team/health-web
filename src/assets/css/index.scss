@@ -27,6 +27,7 @@ $split-line-color: #D8DCE3;
     margin-left: 0px;
   }
   .list-column__container {
+    height: 100%;
     display: flex;
     flex-direction:column;
     .list-title__container {
@@ -92,6 +93,13 @@ $split-line-color: #D8DCE3;
   .dialog-table__container{
     height: 400px;
   }
+}
+// element tree节点字体大小
+.el-tree-node__label {
+  font-size: $content-font__size;
+}
+.el-tree-node i {
+  font-size: $content-font__size;
 }
 
 
