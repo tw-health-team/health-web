@@ -30,3 +30,19 @@ export function formatWithSeperator (datetime, dateSeprator, timeSeprator) {
     return timeFormat
   }
 }
+
+/**
+ * 时间格式化
+ * 将 2018-09-23T11:54:16.000+0000 格式化成 2018-09-23
+ * @param datetime 国际化日期格式
+ */
+export function formatYYYYMMDD (datetime) {
+  if (datetime != null) {
+    const dateMat = new Date(datetime)
+    const year = dateMat.getFullYear()
+    const month = dateMat.getMonth() + 1
+    const day = dateMat.getDate()
+    const timeFormat = year + '-' + month + '-' + day
+    return timeFormat
+  }
+}

@@ -1,33 +1,41 @@
 <template>
-<div class="list-column__container">
-  <div class="list-title__container">
-    <span>机构选择</span>
+  <div>
+    <el-popover ref="popover" :placement="placement" trigger="click">
+      <!--搜索栏-->
+      <div class="select-wrap">
+        <el-row :gutter="24" type="flex" justify="start" align="top">
+          <el-col :span="24">
+            <el-input placeholder="输入名称或拼音简称过滤" size="small" clearable v-model="filterText"></el-input>
+          </el-col>
+        </el-row>
+      </div>
+      <div class="tree-wrap">
+        <el-scrollbar class="scrollbar-wrap">
+          <el-tree
+            :data="organData"
+            :props="organTreeProps"
+            node-key="organId"
+            ref="organTree"
+            accordion
+            @current-change="currentChangeHandle"
+            default-expand-all
+            highlight-current
+            :expand-on-click-node="true"
+            :filter-node-method="filterTreeNode">
+          </el-tree>
+        </el-scrollbar>
+      </div>
+    </el-popover>
+    <el-input v-model="organName" v-popover:popover :readonly="true" placeholder="点击选择机构" style="cursor:pointer;"></el-input>
   </div>
-  <div class="list-select__container">
-    <el-row :gutter="24" type="flex" justify="start" align="top">
-      <el-col :span="18">
-        <el-input placeholder="输入名称或拼音简称过滤" size="small" clearable v-model="filterText"></el-input>
-      </el-col>
-      <el-col :span="6" class="switch-wrap nopadding">
-        <el-switch v-model="isFold" @change="expandOrFoldAllNode"></el-switch>
-      </el-col>
-    </el-row>
-  </div>
-  <el-scrollbar class="list-tree__container">
-  <!--机构树-->
-    <el-tree :data="organData" :props="organTreeProps" node-key="id"
-              ref="organTree" @current-change="currentChangeHandle"
-              default-expand-all highlight-current
-              :expand-on-click-node="false" :filter-node-method="filterTreeNode">
-    </el-tree>
-  </el-scrollbar>
-</div>
 </template>
 
 <script>
+import PopupTreeInput from '@/components/PopupTreeInput'
 export default {
-  name: 'OrganTree',
+  name: 'OrganTreeInput',
   components: {
+    PopupTreeInput
   },
   props: {
     // 机构名
@@ -39,6 +47,10 @@ export default {
     organId: {
       type: String,
       default: ''
+    },
+    placement: {
+      type: String,
+      default: 'right-start'
     },
     currentChangeHandle: {
       type: Function,
@@ -55,8 +67,7 @@ export default {
         children: 'children'
       },
       // 过滤条件
-      filterText: '',
-      isFold: true
+      filterText: ''
     }
   },
   methods: {
@@ -77,12 +88,6 @@ export default {
         isExistsSpelling = data.simpleSpelling.indexOf(value) !== -1
       }
       return data.name.indexOf(value) !== -1 || isExistsSpelling
-    },
-    // 展开/折叠所有节点
-    expandOrFoldAllNode () {
-      for (var i = 0; i < this.$refs.organTree.store._getAllNodes().length; i++) {
-        this.$refs.organTree.store._getAllNodes()[i].expanded = this.isFold
-      }
     }
   },
   computed: {
@@ -109,7 +114,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  /deep/.tree-wrap {
-    height: calc(100% - 62px);
+  .tree-wrap {
+    // height:400px;
+    height:calc(100vh - 150px * 2)
+  }
+  .scrollbar-wrap {
+    height: 100%;
   }
 </style>

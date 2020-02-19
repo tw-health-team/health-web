@@ -162,6 +162,7 @@ export default {
     // ------------------------------右侧树begin-------------------------------------
     // 展开/折叠所有节点
     expandOrFoldAllNode () {
+      debugger
       for (var i = 0; i < this.$refs.menuTree.store._getAllNodes().length; i++) {
         this.$refs.menuTree.store._getAllNodes()[i].expanded = this.menuTree.isFold
       }

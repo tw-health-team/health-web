@@ -353,16 +353,11 @@ export default {
 
 <style scoped lang="scss">
 @import "~theme";
+// 字典分类树高度
 .dict-type-tree{
   height: calc(100% - 62px);
 }
 .el-col+.el-col {
   padding-left:0px !important;
-}
-/deep/ .el-tree-node__label {
-    font-size: $content-font__size;
-}
-/deep/ .el-tree-node i {
-  font-size: $content-font__size;
 }
 </style>
