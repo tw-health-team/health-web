@@ -12,6 +12,7 @@ import * as deptCenter from './moudules/deptCenter'
 import * as healthPerson from './moudules/healthPerson'
 import * as param from './moudules/param'
 import * as deptOrgan from './moudules/deptOrgan'
+import * as area from './moudules/area'
 
 // 默认全部导出
 export default {
@@ -25,5 +26,6 @@ export default {
   log,
   param,
   deptOrgan,
-  healthPerson
+  healthPerson,
+  area
 }

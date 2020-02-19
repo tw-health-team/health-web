@@ -21,6 +21,10 @@ export default {
       deptOrgan: [ // 院内科室
         { typeCode: '1005003', typeName: 'outpatientType' }, // 门诊类型
         { typeCode: '1005004', typeName: 'registeredState' } // 挂号状态
+      ],
+      area: [ // 行政区划
+        { typeCode: '1006001', typeName: 'type' }, // 地址类型
+        { typeCode: '1006002', typeName: 'provincesType' } // 省市类型
       ]
     },
     dictByType: {} // 以type存储的字典数据
