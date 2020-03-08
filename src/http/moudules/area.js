@@ -1,11 +1,3 @@
-/*
- * @Descripttion:
- * @version:
- * @Author: sueRimn
- * @Date: 2020-02-26 13:42:42
- * @LastEditors: sueRimn
- * @LastEditTime: 2020-03-06 17:51:28
- */
 import { get, post } from '../axios'
 
 /*

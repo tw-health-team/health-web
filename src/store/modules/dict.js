@@ -13,6 +13,18 @@ export default {
         { typeCode: '2002', typeName: 'valueType' }, // 参数值类型
         { typeCode: '2003', typeName: 'paramType' }, // 参数类型
         { typeCode: '2004', typeName: 'delFlag' } // 参数状态
+      ],
+      deptCenter: [ // 中心科室
+        { typeCode: '1005001', typeName: 'category' }, // 科室类别
+        { typeCode: '1005002', typeName: 'runk' } // 科室级别
+      ],
+      deptOrgan: [ // 院内科室
+        { typeCode: '1005003', typeName: 'outpatientType' }, // 门诊类型
+        { typeCode: '1005004', typeName: 'registeredState' } // 挂号状态
+      ],
+      area: [ // 行政区划
+        { typeCode: '1006001', typeName: 'type' }, // 地址类型
+        { typeCode: '1006002', typeName: 'provincesType' } // 省市类型
       ]
     },
     dictByType: {} // 以type存储的字典数据
