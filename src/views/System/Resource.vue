@@ -201,20 +201,38 @@ export default {
     // 获取数据
     findTreeData: function () {
       this.loading = true
-      this.$api.menu.findMenuTree().then(res => {
+      this.$api.menu.findResourceTree().then(res => {
         this.tableTreeData = res.data
         this.popupTreeData = this.getParentMenuTree(res.data)
         this.loading = false
       })
     },
     // 获取上级菜单树
-    getParentMenuTree: function (tableTreeData) {
+    getParentMenuTree: function (treeData) {
+      // 实现数组深拷贝
+      let resourceTree = JSON.parse(JSON.stringify(treeData))
+      // 排除按钮
+      let menuTree = this.removeButton(resourceTree)
       let parent = {
         parentId: 0,
         name: '顶级菜单',
-        children: tableTreeData
+        children: menuTree
       }
       return [parent]
+    },
+    // 删除按钮
+    removeButton: function (arr) {
+      if (arr.length) {
+        for (let i in arr) {
+          if (arr[i].children.length && arr[i].children[0].type !== 2) {
+            this.removeButton(arr[i].children)
+          } else {
+            // 子级如果type = 2 即按钮则删除
+            delete arr[i].children
+          }
+        }
+      }
+      return arr
     },
     // 显示新增界面
     handleAdd: function () {

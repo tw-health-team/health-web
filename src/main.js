@@ -18,9 +18,12 @@ import 'font-awesome/css/font-awesome.min.css'
 import '@/assets/iconfont/iconfont.css'
 // 自定义样式
 import '@/assets/css/index.scss'
+// 行政区划插件
+import vRegion from 'v-region-plus'
 
 Vue.use(ElementUI)
 Vue.use(api)
+Vue.use(vRegion)
 
 Vue.prototype.$global = global
 

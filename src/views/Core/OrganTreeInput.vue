@@ -20,7 +20,7 @@
             @current-change="currentChangeHandle"
             default-expand-all
             highlight-current
-            :expand-on-click-node="true"
+            :expand-on-click-node="false"
             :filter-node-method="filterTreeNode">
           </el-tree>
         </el-scrollbar>

@@ -10,6 +10,7 @@ import * as dict from './moudules/dict'
 import * as log from './moudules/log'
 import * as healthPerson from './moudules/healthPerson'
 import * as param from './moudules/param'
+import * as area from './moudules/area'
 
 // 默认全部导出
 export default {
@@ -21,5 +22,6 @@ export default {
   dict,
   log,
   healthPerson,
-  param
+  param,
+  area
 }

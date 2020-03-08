@@ -50,6 +50,7 @@
 
 <script>
 import Cookies from 'js-cookie'
+import store from '@/store'
 export default {
   name: 'PersonalPanel',
   components: {
@@ -78,9 +79,12 @@ export default {
         type: 'warning'
       })
         .then(() => {
+          console.log('退出登录，清除cookie')
           sessionStorage.removeItem('user')
           this.deleteCookie('token')
           this.$router.push('/login')
+          // 修改菜单的加载状态（退出后重新加载菜单）
+          store.commit('menuRouteLoaded', false)
           this.$api.login.logout().then((res) => {
           }).catch(function (res) {
           })

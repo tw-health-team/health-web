@@ -16,31 +16,13 @@
             <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
               <el-input v-model="filters.name" size="small" placeholder="输入用户名模糊查询" clearable></el-input>
             </el-col>
-            <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
-              <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findPage(null)"/>
+            <el-col :span="8" :xs="12" :sm="14" :md="14" :lg="12" class="nopadding">
+              <hm-button icon="fa fa-search" label="查询" perms="system:user:list" type="primary" @click="findFirstPage(null)"/>
               <hm-button icon="fa fa-plus" label="新增" perms="system:user:add" type="primary" @click="handleAdd" />
+              <el-checkbox v-model="showChild" @change="handleCheckChange">是否包含下级机构用户</el-checkbox>
             </el-col>
-            <!-- <el-col :offset="4" :span="6" :sm="6" :md="4" :lg="6">
-              <el-button-group>
-              <el-tooltip content="刷新" placement="top">
-                <el-button icon="fa fa-refresh" @click="findPage(null)"></el-button>
-              </el-tooltip>
-              <el-tooltip content="列显示" placement="top">
-                <el-button icon="fa fa-filter" @click="displayFilterColumnsDialog"></el-button>
-              </el-tooltip>
-              </el-button-group>
-            </el-col> -->
-            <!--表格显示列界面-->
-            <!-- <table-column-filter-dialog ref="tableColumnFilterDialog" :columns="columns"
-              @handleFilterColumns="handleFilterColumns">
-            </table-column-filter-dialog> -->
           </el-row>
         </div>
-        <!--表格内容栏-->
-        <!-- <hm-table :height="tableHeight" permsEdit="system:user:update" :showBatchDelete="false" permsDelete="system:user:remove"
-          :data="pageResult" :columns="filterColumns"
-          @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-        </hm-table> -->
         <!--表格内容栏-->
         <el-table ref="userTable" :height="tableHeight" :data="pageResult.records" stripe size="mini"
           rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
@@ -49,7 +31,7 @@
             prop="name" header-align="center" align="center" minWidth="120" label="用户名">
           </el-table-column>
           <el-table-column
-            prop="organName" header-align="center" align="center" minWidth="120" label="机构">
+            prop="organName" header-align="center" align="center" minWidth="250" label="机构">
           </el-table-column>
           <el-table-column
             prop="roleNames" header-align="center" align="center" minWidth="150" label="角色">
@@ -57,9 +39,6 @@
               <el-tag class="role-tag" v-for="(role) in scope.row.roles" :key="role.id" size="small"
                 :type="role.name.indexOf('管理员')>-1?'primary':'info'">{{role.name}} </el-tag>
             </template>
-          </el-table-column>
-          <el-table-column
-            prop="mobile" header-align="center" align="center" width="100" label="手机">
           </el-table-column>
           <el-table-column
             prop="status" header-align="center" align="center" width="90" label="状态">
@@ -78,6 +57,16 @@
             </template>
           </el-table-column>
         </el-table>
+        <!--分页栏-->
+        <div class="toolbar clearfix">
+          <el-pagination layout="total, sizes, prev, pager, next, jumper"
+            @current-change="refreshPageRequest"
+            @size-change="handleSizeChange"
+            :current-page="pageRequest.pageNum"
+            :page-sizes="[20, 50, 100]"
+            :page-size="pageRequest.pageSize" :total="pageResult.total" style="float:right;">
+          </el-pagination>
+        </div>
       </el-col>
     </el-row>
   <!-- ------------------------------新增修改界面 begin-------------------------------- -->
@@ -150,6 +139,7 @@ export default {
       },
       // -----------------机构树 end------------------
       // -----------------列表 begin------------------
+      showChild: true,
       tableHeight: null,
       loading: false,
       size: 'small',
@@ -158,7 +148,7 @@ export default {
       },
       columns: [],
       filterColumns: [],
-      pageRequest: { pageNum: 1, pageSize: 10 },
+      pageRequest: { pageNum: 1, pageSize: 20 },
       // 分页数据
       pageResult: {},
       // -----------------列表 end--------------------------
@@ -194,22 +184,37 @@ export default {
       this.organTree.organId = data.id
       this.organTree.organName = data.name
       // 查询用户列表
+      this.findFirstPage(null)
+    },
+    // 查询用户 重置页码为第一页
+    findFirstPage: function () {
+      // 重置页码为1
+      this.pageRequest.pageNum = 1
+      // 查询用户列表
       this.findPage(null)
     },
     // 获取分页数据
     findPage: function (data) {
+      this.loading = true
       if (data !== null) {
         this.pageRequest = data.pageRequest
       }
       // this.pageRequest.columnFilters = {name: {name: 'name', value: this.filters.name}}
       this.pageRequest.name = this.filters.name
       this.pageRequest.organId = this.organTree.organId
+      this.pageRequest.showChild = this.showChild ? 1 : 0
       this.$api.user.findPage(this.pageRequest).then((res) => {
         this.pageResult = res.data
-        this.findAllRoles()
+        // this.findAllRoles()
+        this.loading = false
       })
     },
-    // 加载用户角色信息
+    // 是否显示下级机构用户
+    handleCheckChange: function () {
+      // 查询用户列表
+      this.findFirstPage(null)
+    },
+    // 加载所有角色（角色选择）
     findAllRoles: function () {
       this.$api.role.findAll().then((res) => {
         // 加载角色集合
@@ -235,6 +240,15 @@ export default {
       } else {
         this.$message({message: res.msg, type: 'error'})
       }
+    },
+    // 换页刷新
+    refreshPageRequest: function (pageNum) {
+      this.pageRequest.pageNum = pageNum
+      this.findPage(null)
+    },
+    handleSizeChange (val) {
+      this.pageRequest.pageSize = val
+      this.findPage(null)
     },
     // 显示新增界面
     handleAdd: function () {
@@ -383,15 +397,17 @@ export default {
     }
   },
   mounted () {
-    this.findPage(null)
-    // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 220
+    // this.findPage(null)
+    // 查询角色
+    this.findAllRoles()
+    // window.innerHeight:浏览器的可用高度 32(分页栏高度)
+    this.tableHeight = window.innerHeight - 220 - 32
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 220
+        that.tableHeight = window.innerHeight - 220 - 32
       })()
     }
     this.initColumns()
@@ -415,4 +431,20 @@ export default {
 .role-tag+.role-tag{
   margin: 2px 0px 2px 2px;
 }
+.el-col+.el-col {
+  padding-left:0px !important;
+}
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+/* Hides from IE-mac \*/
+* html .clearfix {
+  height: 1%;
+}
+/* End hide from IE-mac */
 </style>

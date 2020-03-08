@@ -54,6 +54,8 @@ export default {
         label: 'name',
         children: 'children'
       },
+      // 默认选中的key
+      defaultSelectedKey: '',
       // 过滤条件
       filterText: '',
       isFold: true
@@ -64,7 +66,14 @@ export default {
     async findOrganTree () {
       await this.$api.organ.findOrganTree().then((res) => {
         this.organData = res.data
-        console.log('获取机构数据')
+        if (this.organId) {
+          this.defaultSelectedKey = this.organId
+          console.log('默认父组件传的机构ID')
+        } else {
+          this.defaultSelectedKey = res.data[0].id
+          console.log('获取第一行的ID')
+        }
+        console.log('获取机构数据END')
       })
     },
     // 过滤树节点
@@ -88,6 +97,9 @@ export default {
   computed: {
     treeFilterText () {
       return this.filterText
+    },
+    defaultSelected () {
+      return this.defaultSelectedKey
     }
   },
   created () {
@@ -95,14 +107,18 @@ export default {
     this.findOrganTree()
   },
   mounted () {
-    this.$nextTick(function () {
-      console.log('设置高亮')
-      this.$refs.organTree.setCurrentKey(this.organId)
-    })
   },
   watch: {
     treeFilterText (val) {
       this.$refs.organTree.filter(val)
+    },
+    defaultSelected (val) {
+      // 默认选中行 后不能触发current-change事件 暂时注释
+      // this.$nextTick(function () {
+      //   console.log('设置默认高亮行')
+      //   console.log(val)
+      //   this.$refs.organTree.setCurrentKey(val)
+      // })
     }
   }
 }

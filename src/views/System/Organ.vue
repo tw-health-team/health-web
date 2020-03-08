@@ -18,7 +18,7 @@
       <el-table ref="organTable" :data="tableTreeData" stripe size="mini"
         rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
         <el-table-column
-          prop="name" header-align="center" treeKey="id" width="150" label="名称">
+          prop="name" header-align="center" treeKey="id" width="350" label="名称">
         </el-table-column>
         <el-table-column
           prop="parentName" header-align="center" align="center" width="120" label="上级机构">
@@ -58,15 +58,17 @@
           <el-input v-model="dataForm.name" placeholder="机构名称" maxlength="50" show-word-limit clearable></el-input>
         </el-form-item>
         <el-form-item label="上级机构" prop="parentName">
-          <popup-tree-input
-            :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级菜单':dataForm.parentName"
+          <!-- <popup-tree-input
+            :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级机构':dataForm.parentName"
             :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
-          </popup-tree-input>
+          </popup-tree-input> -->
+          <OrganTreeInput :organName="dataForm.parentName" :organId="dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
+          </OrganTreeInput>
         </el-form-item>
         <!-- <div class="form-item-wrap">
           <el-form-item label="上级机构" prop="parentName">
             <popup-tree-input
-              :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级菜单':dataForm.parentName"
+              :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null?'顶级机构':dataForm.parentName"
               :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
             </popup-tree-input>
           </el-form-item>
@@ -78,7 +80,7 @@
           <el-form-item label="机构类别" prop="classificationCode">
             <el-select v-model="dataForm.classificationCode" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="dict in this.getClassification" :key="dict.classCode"
+              <el-option v-for="(dict,index) in this.getClassification" :key="index"
                 :label="dict.itemName" :value="dict.itemValue">
               </el-option>
             </el-select>
@@ -86,7 +88,7 @@
           <el-form-item label="机构级别" prop="levelCode">
             <el-select v-model="dataForm.levelCode" placeholder="请选择"
                 style="width: 100%;">
-              <el-option v-for="dict in this.getLevel" :key="dict.classCode"
+              <el-option v-for="(dict,index) in this.getLevel" :key="index"
                 :label="dict.itemName" :value="dict.itemValue">
               </el-option>
             </el-select>
@@ -97,6 +99,9 @@
         </el-form-item>
         <el-form-item label="机构地址" prop="address">
           <el-input v-model="dataForm.address" placeholder="机构地址" maxlength="50" show-word-limit></el-input>
+        </el-form-item>
+        <el-form-item label="所属辖区" prop="location">
+          <v-region v-model="location" type="group" :town="true" :committee="true" @values="regionChange"></v-region>
         </el-form-item>
         <el-form-item label="排序编号" prop="orderNum">
           <el-input-number v-model="dataForm.orderNum" controls-position="right" :min="1" label="排序编号"></el-input-number>
@@ -112,15 +117,19 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import HmButton from '@/views/Core/HmButton'
 import TableTreeColumn from '@/views/Core/TableTreeColumn'
-import PopupTreeInput from '@/components/PopupTreeInput'
+// import PopupTreeInput from '@/components/PopupTreeInput'
+import OrganTreeInput from '@/views/Core/OrganTreeInput'
 import FaIconTooltip from '@/components/FaIconTooltip'
 import { format } from '@/utils/datetime'
 import { mapState, mapGetters } from 'vuex'
+
 export default {
   components: {
-    PopupTreeInput,
+    // PopupTreeInput,
+    OrganTreeInput,
     HmButton,
     TableTreeColumn,
     FaIconTooltip
@@ -139,14 +148,32 @@ export default {
         id: '',
         name: '',
         shortName: '',
-        parentId: 0,
+        parentId: '0',
         parentName: '',
         orderNum: 0,
         classificationCode: '',
         levelCode: '',
         phone: '',
         address: '',
+        locationProvinceCode: '',
+        locationProvinceName: '',
+        locationCityCode: '',
+        locationCityName: '',
+        locationDistrictCode: '',
+        locationDistrictName: '',
+        locationTownCode: '',
+        locationTownName: '',
+        locationCommitteeCode: '',
+        locationCommitteeName: '',
         remarks: ''
+      },
+      // 所属辖区
+      location: {
+        province: '',
+        city: '',
+        area: '',
+        town: '',
+        committee: ''
       },
       dataRule: {
         id: [
@@ -237,7 +264,7 @@ export default {
     // 获取上级机构树
     getParentMenuTree: function (tableTreeData) {
       let parent = {
-        parentId: 0,
+        parentId: '0',
         name: '顶级菜单',
         children: tableTreeData
       }
@@ -247,18 +274,37 @@ export default {
     handleAdd: function (parent = null) {
       this.type = 1
       this.dialogVisible = true
+      // 重置页面数据
       this.dataForm = {
         id: '',
         name: '',
         shortName: '',
-        parentId: parent == null ? 0 : parent.id,
+        parentId: parent == null ? '0' : parent.id,
         parentName: parent == null ? '' : parent.name,
         orderNum: 0,
         classificationCode: '',
         levelCode: '',
         phone: '',
         address: '',
+        locationProvinceCode: '',
+        locationProvinceName: '',
+        locationCityCode: '',
+        locationCityName: '',
+        locationDistrictCode: '',
+        locationDistrictName: '',
+        locationTownCode: '',
+        locationTownName: '',
+        locationCommitteeCode: '',
+        locationCommitteeName: '',
         remarks: ''
+      }
+      // 重置所属辖区
+      this.location = {
+        province: '',
+        city: '',
+        area: '',
+        town: '',
+        committee: ''
       }
     },
     // 显示编辑界面
@@ -266,10 +312,20 @@ export default {
       this.type = 2
       this.dialogVisible = true
       Object.assign(this.dataForm, row)
+      // 赋值所属辖区数据
+      this.location.province = row.locationProvinceCode
+      this.location.city = row.locationCityCode
+      this.location.area = row.locationDistrictCode
+      this.location.town = row.locationTownCode
+      this.location.committee = row.locationCommitteeCode
     },
     // 删除
     handleDelete (row) {
-      this.$confirm('确认删除选中记录吗？', '提示', {
+      let msg = '确认删除选中机构吗？'
+      if (row.children != null && row.children.length > 0) {
+        msg = '确定删除该机构及其下级机构吗？'
+      }
+      this.$confirm(msg, '提示', {
         type: 'warning'
       }).then(() => {
         let params = this.getDeleteIds([], row)
@@ -297,6 +353,40 @@ export default {
     handleTreeSelectChange (data, node) {
       this.dataForm.parentId = data.id
       this.dataForm.parentName = data.name
+    },
+    /**
+     * 行政区划回调时间
+     * @param {object}
+     * @return: { province: { key:'', value:'' },
+                  city: { key:'', value:'' },
+                  area: { key:'', value:'' },
+                  town: { key:'', value:'' }},
+                  committee: { key:'', value:'' }}
+     */
+    regionChange (data) {
+      if (data) {
+        // console.log(data)
+        if (data.province) {
+          this.dataForm.locationProvinceCode = data.province.key
+          this.dataForm.locationProvinceName = data.province.value
+        }
+        if (data.city) {
+          this.dataForm.locationCityCode = data.city.key
+          this.dataForm.locationCityName = data.city.value
+        }
+        if (data.area) {
+          this.dataForm.locationDistrictCode = data.area.key
+          this.dataForm.locationDistrictName = data.area.value
+        }
+        if (data.town) {
+          this.dataForm.locationTownCode = data.town.key
+          this.dataForm.locationTownName = data.town.value
+        }
+        if (data.committee) {
+          this.dataForm.locationCommitteeCode = data.committee.key
+          this.dataForm.locationCommitteeName = data.committee.value
+        }
+      }
     },
     // 表单提交
     submitForm () {

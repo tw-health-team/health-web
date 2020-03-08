@@ -24,7 +24,7 @@ export const batchDelete = (data) => {
 export const findNavTree = (params) => {
   return get('/system/resource/navTree/{username}', null, params)
 }
-// 查找导航菜单树
-export const findMenuTree = () => {
+// 获取所有资源树
+export const findResourceTree = () => {
   return post('/system/resource/list')
 }

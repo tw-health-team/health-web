@@ -162,7 +162,6 @@ export default {
     // ------------------------------右侧树begin-------------------------------------
     // 展开/折叠所有节点
     expandOrFoldAllNode () {
-      debugger
       for (var i = 0; i < this.$refs.menuTree.store._getAllNodes().length; i++) {
         this.$refs.menuTree.store._getAllNodes()[i].expanded = this.menuTree.isFold
       }
@@ -232,7 +231,7 @@ export default {
     // 获取数据
     findTreeData: function () {
       this.menuLoading = true
-      this.$api.menu.findMenuTree().then((res) => {
+      this.$api.menu.findResourceTree().then((res) => {
         this.menuData = res.data
         this.menuLoading = false
       })

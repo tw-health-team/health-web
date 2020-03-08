@@ -8,6 +8,8 @@
 export const baseUrl = window.baseUrl
 // 系统数据备份还原服务器地址
 export const backupBaseUrl = 'http://localhost:8002'
+// 行政区划数据
+export const addressData = window.addressData
 
 /**
  * 判断是否为空
@@ -20,5 +22,6 @@ const isEmpty = (str) => {
 export default {
   baseUrl,
   backupBaseUrl,
-  isEmpty
+  isEmpty,
+  addressData
 }
