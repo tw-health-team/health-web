@@ -38,7 +38,7 @@
           prop="remarks" header-align="center" align="center" label="备注">
         </el-table-column>
         <el-table-column
-          prop="createBy" header-align="center" align="center" label="创建人">
+          prop="createUserName" header-align="center" align="center" label="创建人">
         </el-table-column>
         <el-table-column
           prop="createTime" header-align="center" align="center" label="创建时间" :formatter="dateFormat">

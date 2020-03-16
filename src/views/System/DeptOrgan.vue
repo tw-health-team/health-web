@@ -119,7 +119,7 @@ export default {
         {prop: 'outpatientTypeName', label: '门诊类型', minWidth: 100},
         {prop: 'registeredStateName', label: '挂号状态', minWidth: 100},
         {prop: 'remarks', label: '备注', minWidth: 120},
-        {prop: 'createBy', label: '创建人', minWidth: 100},
+        {prop: 'createUserName', label: '创建人', minWidth: 100},
         {prop: 'createTime', label: '创建时间', minWidth: 120, formatter: this.dateFormat}
       ],
       tableTreeData: [],
