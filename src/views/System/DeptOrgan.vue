@@ -89,7 +89,7 @@
 <script>
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
-import OrganTreeInput from '@/views/Core/OrganTree'
+import OrganTreeInput from '@/views/Core/OrganTreeInput'
 import DeptCenterTreeInput from '@/views/Core/DeptCenterTree'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
