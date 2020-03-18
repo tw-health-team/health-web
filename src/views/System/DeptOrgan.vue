@@ -89,7 +89,7 @@
 <script>
 import HmTable from '@/views/Core/HmTable'
 import HmButton from '@/views/Core/HmButton'
-import OrganTreeInput from '@/views/Core/OrganTree'
+import OrganTreeInput from '@/views/Core/OrganTreeInput'
 import DeptCenterTreeInput from '@/views/Core/DeptCenterTree'
 import TableColumnFilterDialog from '@/views/Core/TableColumnFilterDialog'
 import { format } from '@/utils/datetime'
@@ -119,7 +119,7 @@ export default {
         {prop: 'outpatientTypeName', label: '门诊类型', minWidth: 100},
         {prop: 'registeredStateName', label: '挂号状态', minWidth: 100},
         {prop: 'remarks', label: '备注', minWidth: 120},
-        {prop: 'createBy', label: '创建人', minWidth: 100},
+        {prop: 'createUserName', label: '创建人', minWidth: 100},
         {prop: 'createTime', label: '创建时间', minWidth: 120, formatter: this.dateFormat}
       ],
       tableTreeData: [],
