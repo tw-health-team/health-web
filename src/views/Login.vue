@@ -23,6 +23,7 @@
 <script>
 import Cookies from 'js-cookie'
 import router from '@/router'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'Login',
   data () {
@@ -44,6 +45,9 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      updateUserInfo: 'updateUserInfo'
+    }),
     login () {
       let userInfo = {username: this.loginForm.account, password: this.loginForm.password}
       this.$api.login.login(userInfo).then((res) => {
@@ -52,7 +56,10 @@ export default {
           // Cookies.set('token', res.data.token) // 放置token到Cookie
           sessionStorage.setItem('user', userInfo.username) // 保存用户到本地会话
           router.push('/') // 登录成功，跳转到主页
-          // 登录成功后缓存用户信息
+          this.$api.user.getUserInfo({'username': userInfo.username}).then((res) => {
+            // 缓存用户信息
+            this.updateUserInfo(res.data)
+          })
         } else {
           this.$message({message: res.msg, type: 'error'})
         }

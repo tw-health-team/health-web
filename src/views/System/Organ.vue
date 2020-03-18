@@ -202,6 +202,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      userInfo: state => state.userInfo
+    }),
     ...mapState('dict', [
       'dicProps'
     ]),
@@ -241,6 +244,7 @@ export default {
       })
     },
     fetchDics () {
+      console.log('当前登录用户所属机构：' + this.userInfo.organName)
       /**
        * 请求字典数据
        */
