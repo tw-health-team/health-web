@@ -41,7 +41,7 @@
         <el-table ref="dictTable" :height="tableHeight" :data="tableData" stripe size="mini"
           rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
           <el-table-column
-            prop="itemName" header-align="center" align="center" width="150" label="项目名">
+            prop="itemName" header-align="center" align="center" width="200" label="项目名">
           </el-table-column>
           <el-table-column
             prop="itemValue" header-align="center" align="center" label="项目值">

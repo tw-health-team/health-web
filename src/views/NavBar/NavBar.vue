@@ -1,12 +1,8 @@
 <template>
   <div class="menu-bar-container" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
-    <!-- logo -->
-    <div class="logo" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
-        <img v-if="collapse" src="@/assets/logo.png"/> <div>{{collapse?'':appName}}</div>
-    </div>
     <!-- 导航菜单 -->
     <el-menu default-active="1-1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
-     @open="handleopen" @close="handleclose" @select="handleselect" :collapse="collapse">
+      @open="handleopen" @close="handleclose" @select="handleselect" :collapse="collapse">
       <!-- 导航菜单树组件，动态加载菜单 -->
       <menu-tree v-for="item in navTree" :key="item.menuId" :menu="item"></menu-tree>
     </el-menu>
@@ -83,6 +79,12 @@ export default {
   left: 0;
   bottom: 0;
   z-index: 1020;
+  width: $navbar-width;
+  height: 100%;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   .el-menu {
     position:absolute;
     top: $header-height;
@@ -111,10 +113,10 @@ export default {
     }
   }
   .menu-bar-width {
-    width: 200px;
+    width: $navbar-width;
   }
   .menu-bar-collapse-width {
-    width: 65px;
+    width: $navbar-collapse-width;
   }
 }
 </style>

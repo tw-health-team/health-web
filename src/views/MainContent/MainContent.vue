@@ -97,7 +97,7 @@ export default {
 <style scoped lang="scss">
 @import "~theme";
 .main-container {
-  padding: 0 5px 5px;
+  padding: 0 5px 5px 0px;
   position: absolute;
   top: $header-height;
   left: 1px;
@@ -146,18 +146,17 @@ export default {
   }
   .main-content {
     position: absolute;
-    top: 45px;
-    left: 5px;
-    right: 5px;
-    bottom: 5px;
+    top: $tab-height;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
     padding: 5px;
-    // background: rgba(209, 212, 212, 0.5);
   }
 }
 .position-left {
-  left: 200px;
+  left: $navbar-width;
 }
 .position-collapse-left {
-  left: 65px;
+  left: $navbar-collapse-width;
 }
 </style>

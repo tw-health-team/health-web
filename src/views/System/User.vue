@@ -204,8 +204,12 @@ export default {
       this.pageRequest.organId = this.organTree.organId
       this.pageRequest.showChild = this.showChild ? 1 : 0
       this.$api.user.findPage(this.pageRequest).then((res) => {
-        this.pageResult = res.data
         // this.findAllRoles()
+        if (res.status === 1) {
+          this.pageResult = res.data
+        } else {
+          this.$message({ message: '查询失败,' + res.msg, type: 'error' })
+        }
         this.loading = false
       })
     },

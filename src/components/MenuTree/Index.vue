@@ -1,3 +1,8 @@
+<!--
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-12 17:21:01
+ -->
 <template>
   <el-submenu v-if="menu.children && menu.children.length >= 1" :index="'' + menu.id">
     <template slot="title">
@@ -37,7 +42,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-// .el-submenu, .el-menu-item {
-//   background-color: #3c4b5a44;
-// }
+// 阿里图标样式
+.iconfont{
+  margin-right: 10px;
+}
 </style>

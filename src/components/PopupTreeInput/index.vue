@@ -1,3 +1,8 @@
+<!--
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-17 19:13:16
+ -->
 <template>
   <div>
     <el-popover ref="popover" :placement="placement" trigger="click">
@@ -9,7 +14,7 @@
         @current-change="currentChangeHandle"
         :default-expand-all="true"
         :highlight-current="true"
-        :expand-on-click-node="true">
+        :expand-on-click-node="expandOnClickNode">
       </el-tree>
     </el-popover>
     <el-input v-model="prop" v-popover:popover :readonly="true" :placeholder="placeholder" style="cursor:pointer;"></el-input>
@@ -47,6 +52,10 @@ export default {
     currentChangeHandle: {
       type: Function,
       default: null
+    },
+    expandOnClickNode: { // 是否在点击节点的时候展开或者收缩节点
+      type: Boolean,
+      default: true
     }
   }
 }

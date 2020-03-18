@@ -1,3 +1,8 @@
+/*
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-04 19:14:11
+ */
 import { get, post } from '../axios'
 
 /*
@@ -34,4 +39,8 @@ export const lock = (params) => {
 // 恢复账户
 export const unlock = (params) => {
   return post('/system/user/unlock/{id}', null, params)
+}
+// 根据用户名获取用户信息
+export const getUserInfo = (params) => {
+  return get('/system/user/userInfo/{username}', null, params)
 }

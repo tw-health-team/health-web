@@ -1,3 +1,8 @@
+<!--
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-01 14:37:36
+ -->
 <template>
   <el-form :model="loginForm" :rules="fieldRules" ref="loginForm" label-position="left" label-width="0px" class="login-container">
     <h3 class="title">系统登录</h3>
@@ -47,6 +52,17 @@ export default {
           // Cookies.set('token', res.data.token) // 放置token到Cookie
           sessionStorage.setItem('user', userInfo.username) // 保存用户到本地会话
           router.push('/') // 登录成功，跳转到主页
+          // 登录成功后缓存用户信息
+        } else {
+          this.$message({message: res.msg, type: 'error'})
+        }
+      })
+    },
+    getUserInfo () {
+      let param = {username: this.loginForm.account}
+      this.$api.user.getUserInfo(param).then((res) => {
+        if (res.status > 0) {
+
         } else {
           this.$message({message: res.msg, type: 'error'})
         }

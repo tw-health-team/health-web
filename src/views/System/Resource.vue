@@ -4,7 +4,7 @@
     <div class="list-select__container">
       <el-row :gutter="24" type="flex" justify="start" align="top">
         <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
-          <el-input v-model="filters.name" size="small" placeholder="名称"></el-input>
+          <el-input v-model.trim="filters.name" size="small" placeholder="请输入名称模糊查询" clearable></el-input>
         </el-col>
         <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
           <hm-button icon="fa fa-search" label="查询" perms="system:resource:list" type="primary" @click="findTreeData(null)"/>
@@ -15,17 +15,17 @@
     </div>
     <div class="list-table__container">
       <!--表格树内容栏-->
-      <el-table ref="resourceTable" :data="tableTreeData" stripe size="mini" style="width: 100%;"
-        rowKey="id" v-loading="loading" element-loading-text="拼命加载中" default-expand-all>
+      <el-table ref="resourceTable" :data="tableTreeData"
+        stripe size="mini" style="width: 100%;" rowKey="id" v-loading="loading" element-loading-text="拼命加载中" default-expand-all>
         <el-table-column
-          prop="name" header-align="center" treeKey="id" width="150" label="名称">
+          prop="name" header-align="center" treeKey="id" width="200" label="名称">
         </el-table-column>
-        <el-table-column header-align="center" align="center" label="图标">
+        <el-table-column header-align="center" align="center" width="120" label="图标">
           <template slot-scope="scope">
             <i :class="scope.row.icon || ''"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="type" header-align="center" align="center" label="类型">
+        <el-table-column prop="type" header-align="center" align="center" width="150" label="类型">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.type === 0" size="small">目录</el-tag>
             <el-tag v-else-if="scope.row.type === 1" size="small" type="success">菜单</el-tag>
@@ -33,21 +33,22 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="url" header-align="center" align="center" width="150"
+          prop="url" header-align="center" align="center"
           :show-overflow-tooltip="true" label="菜单URL">
         </el-table-column>
         <el-table-column
-          prop="permission" header-align="center" align="center" width="150"
+          prop="permission" header-align="center" align="center"
           :show-overflow-tooltip="true" label="授权标识">
         </el-table-column>
         <el-table-column
-          prop="sort" header-align="center" align="center" label="排序">
+          prop="sort" header-align="center" align="center" width="60" label="排序">
         </el-table-column>
         <el-table-column
-          fixed="right" header-align="center" align="center" width="185" label="操作">
+          fixed="right" header-align="center" align="center" width="250" label="操作">
           <template slot-scope="scope">
             <hm-button icon="fa fa-edit" label="编辑" perms="system:resource:update" type="primary" size="mini" @click="handleEdit(scope.row)"/>
             <hm-button icon="fa fa-trash" label="删除" perms="system:resource:remove" type="danger" size="mini" @click="handleDelete(scope.row)"/>
+            <hm-button icon="fa fa-plus" label="添加下级" v-if="scope.row.type!==2" perms="system:resource:add" type="success" size="mini" @click="handleAdd(scope.row)"/>
           </template>
         </el-table-column>
       </el-table>
@@ -67,7 +68,7 @@
         <el-form-item label="上级菜单" prop="parentName">
             <popup-tree-input
               :data="popupTreeData" :props="popupTreeProps" :prop="dataForm.parentName==null||dataForm.parentName==''?'顶级菜单':dataForm.parentName"
-              :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange">
+              :nodeKey="''+dataForm.parentId" :currentChangeHandle="handleTreeSelectChange" :expand-on-click-node="false">
             </popup-tree-input>
         </el-form-item>
         <el-form-item v-if="dataForm.type !== 0" label="授权标识" prop="permission">
@@ -90,8 +91,18 @@
             </el-col>
           </el-row>
         </el-form-item>
+        <!-- <div class="form-item-wrap">
+          <el-form-item label="所属平台" prop="systemId">
+            <el-select v-model="dataForm.systemId" placeholder="请选择"
+                style="width: 100%;">
+              <el-option v-for="(dict,index) in this.getSystemType" :key="index"
+                :label="dict.itemName" :value="dict.itemValue">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div> -->
         <el-form-item v-if="dataForm.type !== 2" label="排序编号" prop="sort">
-          <el-input-number v-model="dataForm.sort" controls-position="right" :min="0" label="排序编号"></el-input-number>
+          <el-input-number v-model="dataForm.sort" :min="0" label="排序编号"></el-input-number>
         </el-form-item>
         <el-form-item v-if="dataForm.type !== 2" label="菜单图标" prop="icon">
           <el-row>
@@ -132,6 +143,7 @@ import HmButton from '@/views/Core/HmButton'
 import TableTreeColumn from '@/views/Core/TableTreeColumn'
 import PopupTreeInput from '@/components/PopupTreeInput'
 import FaIconTooltip from '@/components/FaIconTooltip'
+import { mapState, mapGetters } from 'vuex'
 export default {
   components: {
     PopupTreeInput,
@@ -160,7 +172,8 @@ export default {
         permission: '',
         sort: 0,
         icon: '',
-        iconList: []
+        iconList: [],
+        systemId: ''
       },
       dataRule: {
         name: [{ required: true, message: '菜单名称不能为空', trigger: 'blur' }],
@@ -171,7 +184,19 @@ export default {
         label: 'name',
         children: 'children'
       },
+      dict: [{}],
       type: 1 // 1 新增 2 修改
+    }
+  },
+  computed: {
+    ...mapState('dict', [
+      'dicProps'
+    ]),
+    ...mapGetters('dict', {
+      getDic: 'getDic'
+    }),
+    getSystemType () {
+      return this.getDic('systemType')
     }
   },
   methods: {
@@ -201,10 +226,20 @@ export default {
     // 获取数据
     findTreeData: function () {
       this.loading = true
-      this.$api.menu.findResourceTree().then(res => {
+      // this.$api.menu.findResourceTree().then(res => {
+      //   this.tableTreeData = res.data
+      //   this.popupTreeData = this.getParentMenuTree(res.data)
+      //   this.loading = false
+      // })
+      let data = {searchText: this.filters.name}
+      this.$api.menu.findTreeBySearchText(data).then(res => {
         this.tableTreeData = res.data
-        this.popupTreeData = this.getParentMenuTree(res.data)
         this.loading = false
+        // 查询全部时
+        if (this.filters.name === '') {
+          // 获取上级菜单树
+          this.popupTreeData = this.getParentMenuTree(this.tableTreeData)
+        }
       })
     },
     // 获取上级菜单树
@@ -234,22 +269,34 @@ export default {
       }
       return arr
     },
+    fetchDics () {
+      /**
+       * 请求字典数据
+       */
+      if (!this.getDictByType) {
+        // 获取菜单字典
+        this.dicProps.resource.forEach(prop => {
+          this.$store.dispatch('dict/getDictByType', prop)
+        })
+      }
+    },
     // 显示新增界面
-    handleAdd: function () {
+    handleAdd: function (parent = null) {
       this.type = 1
       this.dialogVisible = true
       this.dataForm = {
         id: 0,
-        type: 1,
+        type: parent.type === 1 ? 2 : 1,
         typeList: ['目录', '菜单', '按钮'],
         name: '',
-        parentId: 0,
-        parentName: '',
+        parentId: parent == null ? 0 : parent.id,
+        parentName: parent == null ? '' : parent.name,
         url: '',
         permission: '',
         sort: 0,
         icon: '',
-        iconList: []
+        iconList: [],
+        systemId: ''
       }
     },
     // 显示编辑界面
@@ -337,10 +384,21 @@ export default {
   },
   mounted () {
     this.findTreeData()
+    this.fetchDics()
+  },
+  watch: {
+    // 深度监听，可监听到对象、数组的变化
+    filters: {
+      handler (val, oldVal) {
+
+      },
+      deep: true // true 深度监听
+    }
   }
 }
 </script>
 
 <style scoped lang="scss">
-
+  @import "@/assets/css/detail.scss";
+  @import "~theme";
 </style>

@@ -4,7 +4,7 @@
     <div class="list-select__container">
       <el-row :gutter="24" type="flex" justify="start" align="top">
         <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
-          <el-input v-model="filters.name" size="small" clearable placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
+          <el-input v-model.trim="filters.name" size="small" clearable placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
         </el-col>
         <el-col :span="8" :xs="12" :sm="10" :md="8" :lg="6" class="nopadding">
           <hm-button icon="fa fa-search" label="查询" perms="system:organ:list" type="primary" @click="findTreeData(null)"/>

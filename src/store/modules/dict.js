@@ -1,14 +1,22 @@
+/*
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-10-17 16:30:17
+ */
 import Vue from 'vue'
 
 export default {
   namespaced: true,
   state: {
     dicProps: { // 字典项合集
+      resource: [
+        { typeCode: '0001', typeName: 'systemType' } // 系统分类
+      ],
       organ: [ // 机构
         { typeCode: '1001001', typeName: 'level' }, // 医疗机构级别
         { typeCode: '1001002', typeName: 'classification' } // 医疗机构类型
       ],
-      param: [ // 机构
+      param: [ // 参数
         { typeCode: '2001', typeName: 'inputType' }, // 参数输入方式
         { typeCode: '2002', typeName: 'valueType' }, // 参数值类型
         { typeCode: '2003', typeName: 'paramType' }, // 参数类型
@@ -21,10 +29,6 @@ export default {
       deptOrgan: [ // 院内科室
         { typeCode: '1005003', typeName: 'outpatientType' }, // 门诊类型
         { typeCode: '1005004', typeName: 'registeredState' } // 挂号状态
-      ],
-      area: [ // 行政区划
-        { typeCode: '1006001', typeName: 'type' }, // 地址类型
-        { typeCode: '1006002', typeName: 'provincesType' } // 省市类型
       ]
     },
     dictByType: {} // 以type存储的字典数据

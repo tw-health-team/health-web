@@ -1,9 +1,14 @@
+<!--
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-01 14:37:42
+ -->
 <template>
   <div class="container">
-      <!-- 导航菜单栏 -->
-      <NavBar></NavBar>
       <!-- 头部区域 -->
       <HeadBar></HeadBar>
+      <!-- 导航菜单栏 -->
+      <NavBar></NavBar>
       <!-- 主内容区域 -->
       <MainContent></MainContent>
   </div>

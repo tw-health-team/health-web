@@ -1,3 +1,8 @@
+/*
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-04 19:14:16
+ */
 import { get, post } from '../axios'
 
 /*
@@ -27,4 +32,8 @@ export const findNavTree = (params) => {
 // 获取所有资源树
 export const findResourceTree = () => {
   return post('/system/resource/list')
+}
+// 根据查询条件获取资源树
+export const findTreeBySearchText = (data) => {
+  return post('/system/resource/tree', data)
 }

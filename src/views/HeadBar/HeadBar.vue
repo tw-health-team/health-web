@@ -1,5 +1,8 @@
 <template>
-  <div class="headbar" :class="$store.state.app.collapse?'position-collapse-left':'position-left'">
+  <div class="headbar">
+    <div class="logo">
+        <img src="@/assets/logo.png"/> <h2>{{appName}}</h2>
+    </div>
     <!-- 导航收缩 -->
     <span class="hamburg">
       <el-menu class="el-menu-demo" background-color="#14889A" text-color="#fff"
@@ -80,7 +83,8 @@ export default {
   },
   computed: {
     ...mapState({
-      collapse: state => state.app.collapse
+      collapse: state => state.app.collapse,
+      appName: state => state.app.appName
     })
   },
   methods: {
@@ -111,6 +115,7 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
+  width: 100%;
   z-index: 1030;
   height: $header-height;
   line-height: $header-height;
@@ -118,6 +123,27 @@ export default {
   border-left-width: 1px;
   border-left-style: solid;
   background: rgb(20, 136, 154);
+  .logo {
+    float: left;
+    height: $header-height;
+    line-height: $header-height;
+    background: rgb(20, 136, 154);
+    cursor:pointer;
+    img {
+        width: 40px;
+        height: 40px;
+        border-radius: 0px;
+        margin: 10px 10px 10px 10px;
+        float: left;
+    }
+    h2 {
+      font-size: 22px;
+      color: white;
+      text-align: left;
+      padding-left: 20px;
+      float: right;
+    }
+  }
 }
 .hamburg, .navbar {
   float: left;
@@ -139,11 +165,5 @@ export default {
 }
 .badge {
   line-height: 18px;
-}
-.position-left {
-  left: 200px;
-}
-.position-collapse-left {
-  left: 65px;
 }
 </style>
