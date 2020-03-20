@@ -1,9 +1,12 @@
 <template>
   <div class="page-container">
     <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
-      <el-col :span="5">
-        <div class="tree-container">
-          <div class="tree-select-wrap">
+      <el-col :span="5" class="list-left__container">
+        <div class="list-column__container">
+          <div class="list-title__container">
+            <span>字典分类选择</span>
+          </div>
+          <div class="list-select__container">
             <el-row :gutter="24" type="flex" justify="start" align="top">
               <el-col :span="18">
                 <el-input placeholder="输入名称过滤" size="small" clearable v-model="dictClass.filterText"></el-input>
@@ -13,17 +16,22 @@
               </el-col>
             </el-row>
           </div>
-          <!--字典分类树-->
-          <el-tree class="dict-type-tree" :data="dictClass.treeData" size="mini" node-key="id" :props="dictClass.defaultProps"
-            ref="dictClassTree" v-loading="dictClass.loading" element-loading-text="拼命加载中" :check-strictly="true"
-            @node-click="handleNodeClick" highlight-current default-expand-all
-            :render-content="renderTreeContent" :filter-node-method="filterTreeNode">
-          </el-tree>
+          <el-scrollbar class="list-tree__container">
+            <!--字典分类树-->
+            <el-tree class="dict-type-tree" :data="dictClass.treeData" size="mini" node-key="id" :props="dictClass.defaultProps"
+              ref="dictClassTree" v-loading="dictClass.loading" element-loading-text="拼命加载中" :check-strictly="true"
+              @node-click="handleNodeClick" highlight-current default-expand-all
+              :render-content="renderTreeContent" :filter-node-method="filterTreeNode">
+            </el-tree>
+          </el-scrollbar>
         </div>
       </el-col>
-      <el-col :span="19">
+      <el-col :span="19" class="list-right__container">
+        <div ref="titleDiv" class="list-title__container">
+          <span>字典项列表</span> - <span>{{dictClass.selected.name?dictClass.selected.name:'未选择字典分类'}}</span>
+        </div>
         <!--搜索栏-->
-        <div class="list-select__container">
+        <div ref="searchDiv" class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
             <el-col :span="6" :xs="8" :sm="10" :md="10" :lg="8">
               <el-input v-model="filters.searchText" size="small" clearable placeholder="输入名称或拼音、五笔首拼模糊查询"></el-input>
@@ -113,6 +121,11 @@ export default {
         defaultProps: {
           children: 'children',
           label: 'name'
+        },
+        // 选择的字典分类
+        selected: {
+          code: '',
+          name: ''
         }
       },
       // -----------------字典分类树 end------------------
@@ -196,6 +209,8 @@ export default {
       if (data) {
         // 根据所选节点的字典分类代码获取字典项数据
         this.filters.classCode = data.code
+        this.dictClass.selected.code = data.code
+        this.dictClass.selected.name = data.name
         this.findList()
       }
     },
@@ -324,14 +339,19 @@ export default {
   mounted () {
     // 获取字典分类树
     this.findDictClassTree()
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 180
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 180
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
       })()
     }
   },

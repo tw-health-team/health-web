@@ -1,7 +1,10 @@
 <template>
   <div class="page-container">
+    <div ref="titleDiv" class="list-title__container">
+      <span>机构树</span>
+    </div>
     <!--搜索栏-->
-    <div class="list-select__container">
+    <div ref="searchDiv" class="list-select__container">
       <el-row :gutter="24" type="flex" justify="start" align="top">
         <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
           <el-input v-model.trim="filters.name" size="small" clearable placeholder="请输入机构名称、简称或拼音首拼模糊查询"></el-input>
@@ -13,9 +16,9 @@
         </el-col>
       </el-row>
     </div>
+    <!--表格栏-->
     <div class="list-table__container">
-      <!--表格树内容栏-->
-      <el-table ref="organTable" :data="tableTreeData" stripe size="mini"
+      <el-table ref="organTable" :data="tableTreeData" :height="tableHeight" stripe size="mini"
         rowKey="id" v-loading="loading" element-loading-text="拼命加载中">
         <el-table-column
           prop="name" header-align="center" treeKey="id" width="350" label="名称">
@@ -142,6 +145,7 @@ export default {
       filters: {
         name: ''
       },
+      tableHeight: null,
       tableTreeData: [],
       dialogVisible: false,
       dataForm: {
@@ -439,6 +443,26 @@ export default {
   mounted () {
     this.findTreeData()
     this.fetchDics()
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
+    // window.innerHeight:浏览器的可用高度
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
+    // 赋值vue的this
+    const that = this
+    // window.onresize中的this指向的是window，不是指向vue
+    window.onresize = () => {
+      return (() => {
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
+      })()
+    }
+  },
+  watch: {
+    tableHeight (val) {
+      this.tableHeight = val
+    }
   }
 }
 </script>

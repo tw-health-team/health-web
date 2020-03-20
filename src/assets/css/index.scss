@@ -22,6 +22,20 @@ $split-line-color: #D8DCE3;
 .page-container{
   width: 100%;
   height: 100%;
+  // 左侧容器
+  .list-left__container{
+    background-color: white;
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    margin-left:12px !important;
+    margin-right:5px !important;
+  }
+  // 右侧容器
+  .list-right__container{
+    background-color: white;
+    padding-right:0px !important;
+    margin-right:12px !important;
+  }
   // 修改el-button兄弟button的外边距
   .el-button+.el-button {
     margin-left: 0px;
@@ -38,6 +52,7 @@ $split-line-color: #D8DCE3;
     }
     .list-tree__container {
       flex: auto;
+      background-color: white;
     }
   }
   .list-title__container {

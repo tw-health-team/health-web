@@ -21,7 +21,7 @@
           <el-table-column type="index" width="50" label="序号"></el-table-column>
           <el-table-column prop="shortName" width="120" label="名称">
           </el-table-column>
-          <el-table-column prop="id" width="120" label="编码">
+          <el-table-column prop="id" width="80" label="编码">
           </el-table-column>
           <el-table-column prop="name" width="120" label="全称" v-if="false">
           </el-table-column>
@@ -31,11 +31,11 @@
         </el-table>
       </el-col>
       <el-col :span="19">
-        <div class="list-title__container">
+        <div ref="titleDiv" class="list-title__container">
           <span>行政区划树</span> - <span>{{provinceList.selectedName?provinceList.selectedName:'未选择省(自治区、直辖市)'}}</span>
         </div>
         <!--搜索栏-->
-        <div class="list-select__container">
+        <div ref="searchDiv" class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
             <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
               <el-input v-model="filters.searchText" size="small" placeholder="输入名称或拼音模糊查询" clearable></el-input>
@@ -429,14 +429,19 @@ export default {
   },
   mounted () {
     this.getAllProvince()
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 220
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 220
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight
       })()
     }
   },

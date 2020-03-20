@@ -1,7 +1,15 @@
+<!--
+ * @Description:
+ * @Author: tangwei
+ * @Date: 2019-09-11 17:42:49
+ -->
 <template>
   <div ref="pageContainer" class="page-container">
+    <div ref="titleDiv" class="list-title__container">
+      <span>接口调用日志列表</span>
+    </div>
     <!--搜索栏-->
-    <div class="list-select__container">
+    <div ref="searchDiv" class="list-select__container">
       <el-row :gutter="24" type="flex" justify="start" align="top">
         <el-col :span="6">
           <el-input v-model="filters.name" size="small" placeholder="用户名"></el-input>
@@ -71,14 +79,20 @@ export default {
     }
   },
   mounted () {
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
+    let pagingBarHeight = this.$global.pagingBarHeight
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 220
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 220
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
       })()
     }
   },

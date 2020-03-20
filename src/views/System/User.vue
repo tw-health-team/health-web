@@ -1,17 +1,21 @@
 <template>
   <div ref="pageContainer" class="page-container">
     <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
-      <el-col :span="5">
+      <!-- 左侧容器 -->
+      <el-col :span="5" style="padding-right:5px">
+        <!-- 机构树 -->
         <OrganTree :organName="organTree.organName" :organId="organTree.organId"
           :currentChangeHandle="organTreeChangeHandle">
         </OrganTree>
       </el-col>
+      <!-- 右侧容器 -->
       <el-col :span="19">
-        <div class="list-title__container">
+        <!-- 标题栏 -->
+        <div ref="titleDiv" class="list-title__container">
           <span>机构用户列表</span> - <span>{{organTree.organName?organTree.organName:'未选择机构'}}</span>
         </div>
-        <!--工具栏-->
-        <div class="list-select__container">
+        <!-- 搜索栏 -->
+        <div ref="searchDiv" class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
             <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
               <el-input v-model="filters.name" size="small" placeholder="输入用户名模糊查询" clearable></el-input>
@@ -404,14 +408,20 @@ export default {
     // this.findPage(null)
     // 查询角色
     this.findAllRoles()
-    // window.innerHeight:浏览器的可用高度 32(分页栏高度)
-    this.tableHeight = window.innerHeight - 220 - 32
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
+    let pagingBarHeight = this.$global.pagingBarHeight
+    // window.innerHeight:浏览器的可用高度
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 220 - 32
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
       })()
     }
     this.initColumns()

@@ -1,3 +1,4 @@
+
 <!--
  * @Description:
  * @Author: tangwei
@@ -52,24 +53,28 @@ export default {
       let userInfo = {username: this.loginForm.account, password: this.loginForm.password}
       this.$api.login.login(userInfo).then((res) => {
         if (res.status > 0) {
+          // 放置token到Cookie
           Cookies.set('token', res.data)
-          // Cookies.set('token', res.data.token) // 放置token到Cookie
-          sessionStorage.setItem('user', userInfo.username) // 保存用户到本地会话
-          router.push('/') // 登录成功，跳转到主页
-          this.$api.user.getUserInfo({'username': userInfo.username}).then((res) => {
-            // 缓存用户信息
-            this.updateUserInfo(res.data)
-          })
+          // 保存用户到本地会话
+          sessionStorage.setItem('user', userInfo.username)
+          // // 登录成功，跳转到主页
+          router.push('/')
+          // 缓存用户信息
+          this.cacheUserInfo()
         } else {
           this.$message({message: res.msg, type: 'error'})
         }
       })
     },
-    getUserInfo () {
+    /**
+     * 缓存用户信息
+     */
+    cacheUserInfo () {
       let param = {username: this.loginForm.account}
       this.$api.user.getUserInfo(param).then((res) => {
         if (res.status > 0) {
-
+          // 缓存用户信息
+          this.updateUserInfo(res.data)
         } else {
           this.$message({message: res.msg, type: 'error'})
         }

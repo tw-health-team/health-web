@@ -1,12 +1,14 @@
 <template>
   <div class="page-container">
     <el-row :gutter="24" type="flex" justify="start" align="top" class="content-container">
-      <el-col :span="18">
-        <div class="list-title__container">
+      <!-- 左侧容器 -->
+      <el-col :span="18" style="padding-right:5px">
+        <!-- 标题栏 -->
+        <div ref="titleDiv" class="list-title__container">
           <span>角色列表</span>
         </div>
         <!--搜索栏-->
-        <div class="list-select__container">
+        <div ref="searchDiv" class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
             <el-col :span="6" :xs="12" :sm="8" :md="8" :lg="6">
               <el-input v-model="filters.name" size="small" placeholder="角色名"></el-input>
@@ -23,11 +25,13 @@
           @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
         </hm-table>
       </el-col>
+      <!-- 右侧容器 -->
       <el-col :span="6" class="list-column__container">
+        <!-- 标题栏 -->
         <div class="list-title__container">
           <span>菜单授权</span> - <span>{{selectRole.name?selectRole.name:'未选择角色'}}</span>
         </div>
-        <!--搜索栏-->
+        <!-- 搜索栏 -->
         <div class="list-select__container">
           <el-row :gutter="24" type="flex" justify="start" align="top">
             <el-col :span="18">
@@ -38,6 +42,7 @@
             </el-col>
           </el-row>
         </div>
+        <!-- 树 -->
         <el-scrollbar class="list-tree__container">
           <el-tree :data="menuData" size="mini" show-checkbox node-key="id" :props="defaultProps"
             ref="menuTree" :render-content="renderContent"
@@ -45,8 +50,9 @@
             @check-change="handleMenuCheckChange" default-expand-all :filter-node-method="filterTreeNode">
           </el-tree>
         </el-scrollbar>
+        <!-- 底部工具栏 -->
         <div class="toolbar">
-          <div style="float:left;padding-top:5px;">
+          <div style="float:left;padding-top:7px;">
             <el-checkbox v-model="checkAll" @change="handleCheckAll" :disabled="this.selectRole.id == null"><b>全选</b></el-checkbox>
           </div>
           <div style="float:right;">
@@ -350,14 +356,20 @@ export default {
     }
   },
   mounted () {
+    let headerBarHeight = this.$global.headerHeight
+    let tabHeight = this.$global.tabHeight
+    let spaceHeight = this.$global.spaceHeight
+    let searchHeight = this.$refs.searchDiv.offsetHeight
+    let titleHeight = this.$refs.titleDiv.offsetHeight
+    let pagingBarHeight = this.$global.pagingBarHeight
     // window.innerHeight:浏览器的可用高度
-    this.tableHeight = window.innerHeight - 180 - 32 - 32
+    this.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
     // 赋值vue的this
     const that = this
     // window.onresize中的this指向的是window，不是指向vue
     window.onresize = () => {
       return (() => {
-        that.tableHeight = window.innerHeight - 180 - 32 - 32
+        that.tableHeight = window.innerHeight - headerBarHeight - tabHeight - spaceHeight - searchHeight - titleHeight - pagingBarHeight
       })()
     }
   },
