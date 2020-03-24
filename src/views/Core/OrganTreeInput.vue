@@ -57,7 +57,8 @@ export default {
       default: null
     },
     canNotEdit: {
-      type: Boolean
+      type: Boolean,
+      default: false
     }
   },
   data () {
