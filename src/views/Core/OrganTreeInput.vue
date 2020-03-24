@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-popover ref="popover" :placement="placement" trigger="click">
+    <el-popover ref="popover" :placement="placement" trigger="click" :disabled="canNotEdit">
       <!--搜索栏-->
       <div class="select-wrap">
         <el-row :gutter="24" type="flex" justify="start" align="top">
@@ -26,7 +26,7 @@
         </el-scrollbar>
       </div>
     </el-popover>
-    <el-input v-model="organName" v-popover:popover :readonly="true" placeholder="点击选择机构" style="cursor:pointer;"></el-input>
+    <el-input v-model="organName" v-popover:popover :readonly="true" placeholder="点击选择机构" style="cursor:pointer;" :disabled="canNotEdit"></el-input>
   </div>
 </template>
 
@@ -55,6 +55,9 @@ export default {
     currentChangeHandle: {
       type: Function,
       default: null
+    },
+    canNotEdit: {
+      type: Boolean
     }
   },
   data () {
