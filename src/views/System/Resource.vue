@@ -133,6 +133,12 @@
             </el-col>
           </el-row>
         </el-form-item>
+        <el-form-item v-if="dataForm.type == 1 && type == 1" label="生成按钮" prop="autoCreateButton">
+          <el-radio-group v-model="dataForm.autoCreateButton">
+            <el-radio v-model="radio" label="0">否</el-radio>
+            <el-radio v-model="radio" label="1">是</el-radio>
+          </el-radio-group>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button :size="size"  @click="dialogVisible = false">取消</el-button>
@@ -178,7 +184,8 @@ export default {
         sort: 0,
         icon: '',
         iconList: [],
-        systemId: ''
+        systemId: '',
+        autoCreateButton: '1'
       },
       dataRule: {
         name: [{ required: true, message: '菜单名称不能为空', trigger: 'blur' }],
@@ -301,7 +308,8 @@ export default {
         sort: 0,
         icon: '',
         iconList: [],
-        systemId: ''
+        systemId: '',
+        autoCreateButton: '1'
       }
     },
     // 显示编辑界面

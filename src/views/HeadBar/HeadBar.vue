@@ -140,7 +140,6 @@ export default {
       font-size: 22px;
       color: white;
       text-align: left;
-      padding-left: 20px;
       float: right;
     }
   }

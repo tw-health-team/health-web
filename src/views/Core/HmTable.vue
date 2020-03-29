@@ -4,10 +4,10 @@
     <el-table :data="data.records" :highlight-current-row="highlightCurrentRow" @selection-change="selectionChange"
           @current-change="handleCurrentChange" v-loading="loading" element-loading-text="拼命加载中" :border="border" :stripe="stripe"
           :show-overflow-tooltip="showOverflowTooltip" :height="height" :size="size" :align="align"
-          style="width:100%;" >
+          style="width:100%;" :primaryKey="primaryKey">
       <el-table-column type="selection" width="40" v-if="showBatchDelete & showOperation"></el-table-column>
       <el-table-column type="index" width="50" label="序号"></el-table-column>
-      <el-table-column v-for="column in columns" header-align="center" align="center"
+      <el-table-column v-for="column in columns" header-align="left" align="left"
         :prop="column.prop" :label="column.label" :width="column.width" :min-width="column.minWidth"
         :fixed="column.fixed" :key="column.prop" :type="column.type" :formatter="column.formatter"
         :sortable="column.sortable==null?true:column.sortable">
@@ -42,6 +42,7 @@ export default {
     HmButton
   },
   props: {
+    primaryKey: String, // 主键名
     columns: Array, // 表格列配置
     data: Object, // 表格分页数据
     permsEdit: String, // 编辑权限标识
@@ -131,7 +132,15 @@ export default {
     },
     // 删除
     handleDelete: function (index, row) {
-      this.delete(row.id)
+      let id
+      if (this.primaryKey) {
+        // 主键名不为空 则根据外部传的主键名获取主键值
+        id = row[this.primaryKey]
+      } else {
+        // 获取默认的主键id的值
+        id = row.id
+      }
+      this.delete(id)
     },
     // 批量删除
     handleBatchDelete: function () {

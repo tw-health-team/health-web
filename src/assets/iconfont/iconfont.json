@@ -6,6 +6,20 @@
   "description": "health management platform",
   "glyphs": [
     {
+      "icon_id": "13623319",
+      "name": "健康档案",
+      "font_class": "jiankangdangan",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "7364805",
+      "name": "个人基本信息",
+      "font_class": "gerenjibenxinxi",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
       "icon_id": "7825248",
       "name": "行政区划",
       "font_class": "hangzhengquhua",

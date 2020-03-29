@@ -46,9 +46,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations({
-      updateUserInfo: 'updateUserInfo'
-    }),
     login () {
       let userInfo = {username: this.loginForm.account, password: this.loginForm.password}
       this.$api.login.login(userInfo).then((res) => {
@@ -60,21 +57,7 @@ export default {
           // // 登录成功，跳转到主页
           router.push('/')
           // 缓存用户信息
-          this.cacheUserInfo()
-        } else {
-          this.$message({message: res.msg, type: 'error'})
-        }
-      })
-    },
-    /**
-     * 缓存用户信息
-     */
-    cacheUserInfo () {
-      let param = {username: this.loginForm.account}
-      this.$api.user.getUserInfo(param).then((res) => {
-        if (res.status > 0) {
-          // 缓存用户信息
-          this.updateUserInfo(res.data)
+          // this.cacheUserInfo()
         } else {
           this.$message({message: res.msg, type: 'error'})
         }

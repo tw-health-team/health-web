@@ -224,14 +224,12 @@ export default {
         this.loading = false
       })
     },
-    // 批量删除
+    // 删除
     handleDelete: function (row) {
       this.$confirm('确认删除该字典项吗？', '提示', {
         type: 'warning'
       }).then(() => {
-        let params = []
-        params.push(row.id)
-        this.$api.dict.batchDelete(params).then(res => {
+        this.$api.dict.remove({ id: row.id }).then(res => {
           this.findList()
           if (res.status === 1) {
             this.$message({ message: '删除成功', type: 'success' })
@@ -270,6 +268,7 @@ export default {
       this.catalogueDialogVisible = true
     },
     closeClassDialog: function () {
+      this.findDictClassTree()
       this.catalogueDialogVisible = false
     },
     // ---------------字典表格 end---------------

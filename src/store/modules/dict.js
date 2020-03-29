@@ -50,12 +50,17 @@ export default {
     updateDic (state, data) {
       /**
        * 更新字典项目
-       * @param {Object} data data.code 字典名称  data.data 字典数据
+       * @param {Object} data data.name 字典名称  data.data 字典数据
        */
       Vue.set(state.dictByType, data.name, data.data)
     }
   },
   actions: {
+    /**
+     * 通过字典类型获取字典项数据
+     * @param {object} context({commit}使用了对象的解构)
+     * @param {object} payload 请求参数
+     */
     getDictByType ({commit}, payload) {
       let _this = Vue.prototype
       _this.$api.dict.findDictByType({

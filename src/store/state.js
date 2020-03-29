@@ -1,4 +1,11 @@
 /*
+ * Vuex的store中的state是响应式的，当state的数据更新时，vue组件会自动更新
+ * 前提：
+ * 1、提前在store中初始化好所需的属性
+ * 2、当给state的对象添加新属性时，使用下面方式：
+ * 方式一：使用Vue.set(obj,'newProp',123)
+ * 方式二：用新的对象给旧对象重新赋值
+ * 删除：Vue.delete(state.info,'age')
  * @Description:
  * @Author: tangwei
  * @Date: 2019-09-08 20:23:52

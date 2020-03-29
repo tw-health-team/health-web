@@ -62,12 +62,29 @@ router.beforeEach((to, from, next) => {
       // 如果访问非登录界面，且户会话信息不存在，代表未登录，则跳转到登录界面
       next({ path: '/login' })
     } else {
+      // 缓存用户信息
+      cacheUserInfo(userName)
       // 加载动态菜单和路由
       addDynamicMenuAndRoutes(userName, to, from)
       next()
     }
   }
 })
+
+/**
+ * 缓存用户信息
+ */
+function cacheUserInfo (userName) {
+  let param = {username: userName}
+  api.user.getUserInfo(param).then((res) => {
+    if (res.status > 0) {
+      // 缓存用户信息
+      store.commit('updateUserInfo', res.data)
+    } else {
+      this.$message({message: res.msg, type: 'error'})
+    }
+  })
+}
 
 /**
 * 加载动态菜单和路由

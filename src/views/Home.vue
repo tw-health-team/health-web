@@ -23,6 +23,10 @@ export default {
     HeadBar,
     NavBar,
     MainContent
+  },
+  methods: {
+  },
+  mounted () {
   }
 }
 </script>
